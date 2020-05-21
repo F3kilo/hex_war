@@ -16,7 +16,7 @@ fn main() {
     info!(logger, "Logger initialized");
 
     let event_loop = winit::event_loop::EventLoop::new();
-    let app = HexWarApp::new(&event_loop);
+    let app = HexWarApp::new(&event_loop, logger.clone());
     if let Err(e) = app {
         show_error_message(e, logger);
         return;
