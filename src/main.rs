@@ -34,6 +34,11 @@ fn init_logger() -> Logger {
 }
 
 pub fn show_error_message(error: impl Error, logger: Logger) {
-    // TODO: display error dialog with text in `e`
+    let error_message = format!("Error occured: {}", error);
+    tinyfiledialogs::message_box_ok(
+        "Error",
+        error_message.as_str(),
+        tinyfiledialogs::MessageBoxIcon::Error,
+    );
     crit!(logger, "Error occured: {}", error)
 }

@@ -331,6 +331,7 @@ dependencies = [
  "slog",
  "slog-async",
  "slog-term",
+ "tinyfiledialogs",
  "winit",
 ]
 
@@ -874,6 +875,16 @@ checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
 dependencies = [
  "libc",
  "winapi 0.3.8",
+]
+
+[[package]]
+name = "tinyfiledialogs"
+version = "3.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "848eb50d6d21430349d82418c2244f611b1ad3e1c52c675320338b3102d06554"
+dependencies = [
+ "cc",
+ "libc",
 ]
 
 [[package]]
