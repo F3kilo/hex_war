@@ -8,17 +8,22 @@ use slog::{Drain, Logger};
 use slog_async::Async;
 use slog_term::{CompactFormat, TermDecorator};
 
-use crate::app::DummyWinitEventAdaptor;
 use crate::hex_war_app::HexWarApp;
+use std::error::Error;
 
 fn main() {
     let logger = init_logger();
     info!(logger, "Logger initialized");
 
-    let event_adapter = DummyWinitEventAdaptor::default();
-    let app = HexWarApp {};
+    let event_loop = winit::event_loop::EventLoop::new();
+    let app = HexWarApp::new(&event_loop);
+    if let Err(e) = app {
+        show_error_message(e, logger);
+        return;
+    }
+    let app = app.unwrap();
 
-    event_loop::run_event_loop(app, event_adapter);
+    event_loop::run_event_loop(event_loop, app, HexWarApp::get_events_adaptor());
 }
 
 fn init_logger() -> Logger {
@@ -26,4 +31,9 @@ fn init_logger() -> Logger {
     let format = CompactFormat::new(term).build().fuse();
     let sync = Async::new(format).build().fuse();
     Logger::root(sync, o!())
+}
+
+pub fn show_error_message(error: impl Error, logger: Logger) {
+    // TODO: display error dialog with text in `e`
+    crit!(logger, "Error occured: {}", error)
 }
