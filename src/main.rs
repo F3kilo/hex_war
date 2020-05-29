@@ -1,4 +1,6 @@
 mod app;
+mod app_event_adapter;
+mod app_init_error;
 mod event_loop;
 mod hex_war_app;
 
@@ -8,22 +10,26 @@ use slog::{Drain, Logger};
 use slog_async::Async;
 use slog_term::{CompactFormat, TermDecorator};
 
+use crate::app_event_adapter::WinitEventAdaptor;
+use crate::app_init_error::{AppInitError, WindowCreateError};
 use crate::hex_war_app::HexWarApp;
 use std::error::Error;
+use winit::event_loop::{EventLoop, EventLoopWindowTarget};
+use winit::window::{Window, WindowBuilder};
 
 fn main() {
     let logger = init_logger();
     info!(logger, "Logger initialized");
 
     let event_loop = winit::event_loop::EventLoop::new();
-    let app = HexWarApp::new(&event_loop, logger.clone());
+    let app = init_hex_war_app(logger.clone(), &event_loop);
     if let Err(e) = app {
         show_error_message(e, logger);
         return;
     }
     let app = app.unwrap();
 
-    event_loop::run_event_loop(event_loop, app, HexWarApp::get_events_adaptor());
+    event_loop::run_event_loop(event_loop, app, WinitEventAdaptor::new());
 }
 
 fn init_logger() -> Logger {
@@ -31,6 +37,18 @@ fn init_logger() -> Logger {
     let format = CompactFormat::new(term).build().fuse();
     let sync = Async::new(format).build().fuse();
     Logger::root(sync, o!())
+}
+
+fn init_window(event_loop_wt: &EventLoopWindowTarget<()>) -> Result<Window, WindowCreateError> {
+    WindowBuilder::new()
+        .with_inner_size(winit::dpi::PhysicalSize::new(800, 600))
+        .with_title("HexWar")
+        .build(event_loop_wt)
+}
+
+fn init_hex_war_app(logger: Logger, elwt: &EventLoop<()>) -> Result<HexWarApp, AppInitError> {
+    let window = init_window(&elwt)?;
+    Ok(HexWarApp::new(window, logger))
 }
 
 pub fn show_error_message(error: impl Error, logger: Logger) {

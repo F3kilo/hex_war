@@ -1,12 +1,10 @@
-pub mod error;
 pub mod event;
 
 use crate::app::status::Status;
-use crate::app::{App, WinitEventAdaptor};
-use error::{AppInitError, WindowCreateError};
+use crate::app::App;
 use slog::Logger;
 use winit::event_loop::EventLoopWindowTarget;
-use winit::window::{Window, WindowBuilder, WindowId};
+use winit::window::{Window, WindowId};
 
 pub struct HexWarApp {
     window: Window,
@@ -14,26 +12,8 @@ pub struct HexWarApp {
 }
 
 impl HexWarApp {
-    pub fn new(
-        event_loop_wt: &EventLoopWindowTarget<()>,
-        logger: Logger,
-    ) -> Result<Self, AppInitError> {
-        trace!(logger, "Init window.");
-        let window = Self::create_window(event_loop_wt)?;
-        Ok(Self { window, logger })
-    }
-
-    pub fn get_events_adaptor() -> impl WinitEventAdaptor<AppEvent = event::Event> {
-        event::WinitEventAdaptor::new()
-    }
-
-    pub fn create_window(
-        event_loop_wt: &EventLoopWindowTarget<()>,
-    ) -> Result<Window, WindowCreateError> {
-        WindowBuilder::new()
-            .with_inner_size(winit::dpi::PhysicalSize::new(800, 600))
-            .with_title("HexWar")
-            .build(event_loop_wt)
+    pub fn new(window: Window, logger: Logger) -> Self {
+        Self { window, logger }
     }
 }
 
