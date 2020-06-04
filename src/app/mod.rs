@@ -9,7 +9,7 @@ use winit::window::WindowId;
 pub trait App {
     type Event;
 
-    fn process_event(&mut self, event: Self::Event, wt: &EventLoopWindowTarget<()>) -> Status;
+    fn process_event(&mut self, event: Self::Event, wt: &EventLoopWindowTarget<()>);
     fn update(&mut self, wt: &EventLoopWindowTarget<()>) -> Status;
     fn draw(&mut self, window_id: WindowId);
 }

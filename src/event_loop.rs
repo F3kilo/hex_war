@@ -13,9 +13,7 @@ where
         let adapted_event = event_adaptor.adapt_event(event);
 
         if let Ok(app_event) = adapted_event {
-            if let Status::Finish = app.process_event(app_event, event_loop_wt) {
-                *control_flow = ControlFlow::Exit;
-            }
+            app.process_event(app_event, event_loop_wt);
             return;
         }
 
