@@ -1,6 +1,7 @@
 use crate::hex_war_app::main_menu::cursor::Cursor;
 use winit::event::{ElementState, MouseButton};
 
+#[derive(Debug)]
 pub enum MainPageEvent {
     StartGame,
     Settings,
@@ -23,6 +24,9 @@ impl MainPage {
         state: ElementState,
         cursor: &Cursor,
     ) -> Option<MainPageEvent> {
+        if button == MouseButton::Middle && state == ElementState::Pressed {
+            return Some(MainPageEvent::Exit);
+        }
         None
     }
 }

@@ -48,7 +48,7 @@ impl MainMenu {
                     None
                 }
                 PageEvent::StartGame => Some(MenuEvent::StartGame),
-                PageEvent::Exit => Some(MenuEvent::StartGame),
+                PageEvent::Exit => Some(MenuEvent::Exit),
             };
         }
         None
