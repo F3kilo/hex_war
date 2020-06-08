@@ -12,7 +12,7 @@ pub enum WindowEvent {
     CloseRequested,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum CursorEvent {
     MoveTo(Vec2),
     ButtonUse(MouseButton, ElementState),

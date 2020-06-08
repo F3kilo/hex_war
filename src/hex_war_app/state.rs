@@ -1,3 +1,4 @@
+use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::event::CursorEvent;
 use crate::hex_war_app::main_menu::{MainMenu, MenuEvent};
 use crate::hex_war_app::state::StateEvent::StartGame;
@@ -29,9 +30,9 @@ impl State {
         State::Menu(MainMenu::new(logger))
     }
 
-    pub fn cursor_used(&mut self, event: CursorEvent) -> Option<StateEvent> {
+    pub fn cursor_used(&mut self, event: CursorEvent, cursor: &mut Cursor) -> Option<StateEvent> {
         match self {
-            State::Menu(main_menu) => main_menu.cursor_used(event).map(|e| e.into()),
+            State::Menu(main_menu) => main_menu.cursor_used(event, cursor).map(|e| e.into()),
             State::Game => None,
         }
     }

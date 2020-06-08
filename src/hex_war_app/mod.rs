@@ -1,11 +1,16 @@
+pub mod cursor;
 pub mod event;
+pub mod graphics;
 pub mod main_menu;
 pub mod state;
 
 use crate::app::status::Status;
 use crate::app::App;
+use crate::hex_war_app::cursor::Cursor;
+use crate::hex_war_app::graphics::Sprite;
 use crate::hex_war_app::state::StateEvent;
 use event::{Event, WindowEvent};
+use glam::Vec2;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
@@ -17,15 +22,18 @@ pub struct HexWarApp {
     logger: Logger,
     status: Status,
     state: State,
+    cursor: Cursor,
 }
 
 impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
+        let cursor = Cursor::new(Vec2::zero(), Sprite::new());
         Self {
             window,
             logger: logger.clone(),
             status: Status::Run,
             state: State::Menu(MainMenu::new(logger)),
+            cursor,
         }
     }
 
@@ -42,7 +50,8 @@ impl HexWarApp {
         match event {
             WindowEvent::CloseRequested => self.status = Status::Finish,
             WindowEvent::Cursor(cursor_event) => {
-                let state_event = self.state.cursor_used(cursor_event);
+                self.cursor.process_event(cursor_event);
+                let state_event = self.state.cursor_used(cursor_event, &mut self.cursor);
                 self.process_state_event(state_event);
             }
         }
@@ -67,8 +76,9 @@ impl HexWarApp {
 
     fn render(&mut self) {
         trace!(self.logger, "HexWarApp render called");
-
         self.state.render();
+        // TODO: call cursor render method when renderer will be ready
+        // self.cursor.render();
     }
 }
 
