@@ -23,9 +23,9 @@ impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
         Self {
             window,
-            logger,
+            logger: logger.clone(),
             status: Status::Run,
-            state: State::Menu(MainMenu::new()),
+            state: State::Menu(MainMenu::new(logger)),
         }
     }
 
@@ -34,6 +34,11 @@ impl HexWarApp {
     }
 
     fn process_window_event(&mut self, event: WindowEvent) {
+        trace!(
+            self.logger,
+            "HexWarApp processing window event: {:?}",
+            event
+        );
         match event {
             WindowEvent::CloseRequested => self.status = Status::Finish,
             WindowEvent::Cursor(cursor_event) => {
@@ -44,6 +49,8 @@ impl HexWarApp {
     }
 
     fn process_state_event(&mut self, event: Option<StateEvent>) {
+        trace!(self.logger, "HexWarApp processing state event: {:?}", event);
+
         if let Some(event) = event {
             match event {
                 StateEvent::Exit => self.status = Status::Finish,
@@ -53,10 +60,14 @@ impl HexWarApp {
     }
 
     fn start_game(&mut self) {
+        trace!(self.logger, "HexWarApp start game");
+
         self.state = State::Game;
     }
 
     fn render(&mut self) {
+        trace!(self.logger, "HexWarApp render called");
+
         self.state.render();
     }
 }
@@ -74,7 +85,7 @@ impl App for HexWarApp {
 
     fn update(&mut self, _wt: &EventLoopWindowTarget<()>) -> Status {
         trace!(self.logger, "Called update()");
-        std::thread::sleep(std::time::Duration::from_millis(20));
+        std::thread::sleep(std::time::Duration::from_millis(200));
 
         self.get_status()
     }

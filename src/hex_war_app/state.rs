@@ -1,7 +1,9 @@
 use crate::hex_war_app::event::CursorEvent;
 use crate::hex_war_app::main_menu::{MainMenu, MenuEvent};
 use crate::hex_war_app::state::StateEvent::StartGame;
+use slog::Logger;
 
+#[derive(Debug)]
 pub enum StateEvent {
     StartGame,
     Exit,
@@ -23,8 +25,8 @@ pub enum State {
 }
 
 impl State {
-    pub fn new() -> Self {
-        State::Menu(MainMenu::new())
+    pub fn new(logger: Logger) -> Self {
+        State::Menu(MainMenu::new(logger))
     }
 
     pub fn cursor_used(&mut self, event: CursorEvent) -> Option<StateEvent> {

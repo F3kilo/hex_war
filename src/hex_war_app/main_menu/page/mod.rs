@@ -2,8 +2,10 @@ mod main_page;
 use crate::hex_war_app::main_menu::cursor::Cursor;
 use crate::hex_war_app::main_menu::page::main_page::MainPageEvent;
 use main_page::MainPage;
+use slog::Logger;
 use winit::event::{ElementState, MouseButton};
 
+#[derive(Debug)]
 pub enum PageEvent {
     PageChange(Page),
     StartGame,
@@ -27,8 +29,8 @@ pub enum Page {
 }
 
 impl Page {
-    pub fn new() -> Self {
-        Page::Main(MainPage::new())
+    pub fn new(logger: Logger) -> Self {
+        Page::Main(MainPage::new(logger))
     }
 
     pub fn cursor_moved(&mut self, cursor: &Cursor) {
@@ -49,11 +51,11 @@ impl Page {
             Page::Settings => None,
         }
     }
-    
+
     pub fn render(&self) {
         match self {
             Page::Main(page) => page.render(),
-            Page::Settings => {},
+            Page::Settings => {}
         }
     }
 }
