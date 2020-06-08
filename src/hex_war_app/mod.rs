@@ -55,6 +55,10 @@ impl HexWarApp {
     fn start_game(&mut self) {
         self.state = State::Game;
     }
+
+    fn render(&mut self) {
+        self.state.render();
+    }
 }
 
 impl App for HexWarApp {
@@ -70,12 +74,13 @@ impl App for HexWarApp {
 
     fn update(&mut self, _wt: &EventLoopWindowTarget<()>) -> Status {
         trace!(self.logger, "Called update()");
-        std::thread::sleep(std::time::Duration::from_millis(200));
+        std::thread::sleep(std::time::Duration::from_millis(20));
 
         self.get_status()
     }
 
     fn draw(&mut self, _window_id: WindowId) {
         trace!(self.logger, "Called draw()");
+        self.render()
     }
 }

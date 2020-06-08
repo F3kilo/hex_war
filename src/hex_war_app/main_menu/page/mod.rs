@@ -49,4 +49,11 @@ impl Page {
             Page::Settings => None,
         }
     }
+    
+    pub fn render(&self) {
+        match self {
+            Page::Main(page) => page.render(),
+            Page::Settings => {},
+        }
+    }
 }

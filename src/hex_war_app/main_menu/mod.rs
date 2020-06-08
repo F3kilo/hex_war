@@ -57,4 +57,9 @@ impl MainMenu {
     fn change_page(&mut self, new_page: Page) {
         self.page = new_page;
     }
+
+    pub fn render(&self) {
+        self.cursor.render();
+        self.page.render();
+    }
 }

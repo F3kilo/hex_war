@@ -33,4 +33,11 @@ impl State {
             State::Game => None,
         }
     }
+
+    pub fn render(&self) {
+        match self {
+            State::Menu(main_menu) => main_menu.render(),
+            State::Game => {}
+        }
+    }
 }

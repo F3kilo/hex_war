@@ -29,4 +29,6 @@ impl MainPage {
         }
         None
     }
+
+    pub fn render(&self) {}
 }

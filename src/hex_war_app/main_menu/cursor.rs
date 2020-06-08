@@ -17,4 +17,6 @@ impl Cursor {
     pub fn get_pos(&self) -> Vec2 {
         self.pos
     }
+
+    pub fn render(&self) {}
 }
