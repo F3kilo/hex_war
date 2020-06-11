@@ -43,9 +43,7 @@ impl HexWarApp {
         true
     }
 
-    pub fn update(&mut self) -> bool {
-        true
-    }
+    pub fn update(&mut self) {}
 
     pub fn is_finished(&self) -> bool {
         if let State::Finished = self.state {
