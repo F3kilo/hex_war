@@ -1,8 +1,8 @@
 mod app;
-mod app_event_adapter;
 mod app_init_error;
 mod event_loop;
 mod hex_war_app;
+mod screen_coords;
 
 #[macro_use]
 extern crate slog;
@@ -10,7 +10,6 @@ use slog::{Drain, Logger};
 use slog_async::Async;
 use slog_term::{CompactFormat, TermDecorator};
 
-use crate::app_event_adapter::WinitEventAdaptor;
 use crate::app_init_error::{AppInitError, WindowCreateError};
 use crate::hex_war_app::HexWarApp;
 use std::error::Error;
@@ -29,7 +28,7 @@ fn main() {
     }
     let app = app.unwrap();
 
-    event_loop::run_event_loop(event_loop, app, WinitEventAdaptor::new());
+    event_loop::run_event_loop(event_loop, app);
 }
 
 fn init_logger() -> Logger {

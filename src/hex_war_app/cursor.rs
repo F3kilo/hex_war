@@ -1,30 +1,20 @@
-use crate::hex_war_app::event::CursorEvent;
-use crate::hex_war_app::graphics::{Renderer, Sprite};
-use glam::Vec2;
+use crate::screen_coords::ScreenCoords;
 
 #[derive(Debug)]
 pub struct Cursor {
-    pos: Vec2,
-    sprite: Sprite,
+    pos: ScreenCoords,
 }
 
 impl Cursor {
-    pub fn new(pos: Vec2, sprite: Sprite) -> Self {
-        Self { pos, sprite }
+    pub fn new(pos: ScreenCoords) -> Self {
+        Self { pos }
     }
 
-    pub fn get_pos(&self) -> Vec2 {
+    pub fn get_pos(&self) -> ScreenCoords {
         self.pos
     }
 
-    pub fn render(&self, renderer: &impl Renderer) {
-        self.sprite.render(renderer)
-    }
-
-    pub fn process_event(&mut self, event: CursorEvent) {
-        match event {
-            CursorEvent::MoveTo(new_pos) => self.pos = new_pos,
-            CursorEvent::ButtonUse(_, _) => {}
-        }
+    pub fn move_to(&mut self, pos: ScreenCoords) {
+        self.pos = pos
     }
 }
