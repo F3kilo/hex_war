@@ -1,11 +1,12 @@
 pub mod cursor;
 pub mod main_menu;
 pub mod state;
+pub mod update_timer;
 
 use crate::app::{App, ELWT};
 use crate::hex_war_app::cursor::Cursor;
+use crate::hex_war_app::update_timer::UpdateTimer;
 use crate::screen_coords::ScreenCoords;
-use glam::Vec2;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
@@ -18,16 +19,19 @@ pub struct HexWarApp {
     logger: Logger,
     state: State,
     cursor: Cursor,
+    update_timer: UpdateTimer,
 }
 
 impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
         let cursor = Cursor::new(ScreenCoords::zero());
+        let update_timer = UpdateTimer::new(60);
         Self {
             window,
             logger: logger.clone(),
             state: State::Menu(MainMenu::new(logger)),
             cursor,
+            update_timer,
         }
     }
 
@@ -40,10 +44,12 @@ impl HexWarApp {
     pub fn mouse_button_used(&mut self, button: MouseButton, state: ElementState) {}
 
     pub fn is_time_to_update(&self) -> bool {
-        true
+        self.update_timer.is_time_to_update()
     }
 
-    pub fn update(&mut self) {}
+    pub fn update(&mut self) {
+        self.update_timer.update();
+    }
 
     pub fn is_finished(&self) -> bool {
         if let State::Finished = self.state {
