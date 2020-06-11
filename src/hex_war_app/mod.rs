@@ -48,6 +48,9 @@ impl HexWarApp {
     }
 
     pub fn is_finished(&self) -> bool {
+        if let State::Finished = self.state {
+            return true;
+        }
         false
     }
 
