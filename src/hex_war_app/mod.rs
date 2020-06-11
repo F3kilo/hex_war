@@ -26,6 +26,7 @@ impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
         let cursor = Cursor::new(ScreenCoords::zero());
         let update_timer = UpdateTimer::new(60);
+        trace!(logger, "HexWarApp initialized");
         Self {
             window,
             logger: logger.clone(),
@@ -35,32 +36,51 @@ impl HexWarApp {
         }
     }
 
-    pub fn close_requested(&mut self) {}
+    pub fn close_requested(&mut self) {
+        trace!(self.logger, "HexWarApp close requested.");
+        self.state = State::Finished
+    }
 
     pub fn cursor_moved(&mut self, new_pos: ScreenCoords) {
+        trace!(self.logger, "HexWarApp cursor moved: {:?}.", new_pos);
         self.cursor.move_to(new_pos)
     }
 
-    pub fn mouse_button_used(&mut self, button: MouseButton, state: ElementState) {}
+    pub fn mouse_button_used(&mut self, button: MouseButton, state: ElementState) {
+        trace!(
+            self.logger,
+            "HexWarApp mouse button pressed: ({:?},{:?}).",
+            button,
+            state
+        );
+    }
 
     pub fn is_time_to_update(&self) -> bool {
         self.update_timer.is_time_to_update()
     }
 
     pub fn update(&mut self) {
+        trace!(self.logger, "HexWarApp updating.");
         self.update_timer.update();
     }
 
     pub fn is_finished(&self) -> bool {
         if let State::Finished = self.state {
+            trace!(self.logger, "HexWarApp finished.");
             return true;
         }
         false
     }
 
-    pub fn window_resized(&mut self, new_size: ScreenCoords) {}
-    pub fn window_destroyed(&mut self) {}
-    pub fn draw(&mut self) {}
+    pub fn window_resized(&mut self, new_size: ScreenCoords) {
+        trace!(self.logger, "HexWarApp window resized.");
+    }
+    pub fn window_destroyed(&mut self) {
+        trace!(self.logger, "HexWarApp window destroyed.");
+    }
+    pub fn draw(&mut self) {
+        trace!(self.logger, "HexWarApp draw.");
+    }
 }
 
 impl App for HexWarApp {

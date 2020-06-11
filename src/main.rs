@@ -52,10 +52,10 @@ fn init_hex_war_app(logger: Logger, elwt: &EventLoop<()>) -> Result<HexWarApp, A
 
 pub fn show_error_message(error: impl Error, logger: Logger) {
     let error_message = format!("Error occured: {}", error);
-    // tinyfiledialogs::message_box_ok(
-    //     "Error",
-    //     error_message.as_str(),
-    //     tinyfiledialogs::MessageBoxIcon::Error,
-    // );
+    tinyfiledialogs::message_box_ok(
+        "Error",
+        error_message.as_str(),
+        tinyfiledialogs::MessageBoxIcon::Error,
+    );
     crit!(logger, "Error occured: {}", error)
 }
