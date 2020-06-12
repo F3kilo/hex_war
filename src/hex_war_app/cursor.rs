@@ -1,4 +1,4 @@
-use crate::screen_coords::ScreenCoords;
+use crate::coords::ScreenCoords;
 
 #[derive(Debug)]
 pub struct Cursor {

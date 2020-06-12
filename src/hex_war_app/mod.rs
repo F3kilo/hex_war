@@ -6,7 +6,7 @@ pub mod update_timer;
 use crate::app::{App, ELWT};
 use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::update_timer::UpdateTimer;
-use crate::screen_coords::ScreenCoords;
+use crate::coords::ScreenCoords;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
