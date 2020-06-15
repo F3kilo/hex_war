@@ -1,9 +1,9 @@
 mod app;
-mod graphics;
 mod app_init_error;
-mod event_loop;
-mod hex_war_app;
 mod coords;
+mod event_loop;
+mod graphics;
+mod hex_war_app;
 
 #[macro_use]
 extern crate slog;
@@ -52,11 +52,11 @@ fn init_hex_war_app(logger: Logger, elwt: &EventLoop<()>) -> Result<HexWarApp, A
 }
 
 pub fn show_error_message(error: impl Error, logger: Logger) {
-    let error_message = format!("Error occured: {}", error);
+    let error_message = format!("Error occurred: {}", error);
     tinyfiledialogs::message_box_ok(
         "Error",
         error_message.as_str(),
         tinyfiledialogs::MessageBoxIcon::Error,
     );
-    crit!(logger, "Error occured: {}", error)
+    crit!(logger, "Error occurred: {}", error)
 }
