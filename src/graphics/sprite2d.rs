@@ -1,36 +1,34 @@
 use crate::coords::WorldCoords;
 
-use glam::{Vec4, Vec2};
-use std::cell::Cell;
+use crate::graphics::{Mesh, MeshInfo, Renderer, Texture};
+use glam::{Mat4, Quat, Vec2, Vec4};
 
 /// Four-component color. Last element represent transparency.
 pub type ColorRgba = Vec4;
 
 type UvCoords = Vec2;
 
-struct TexturePart {
-    pub texture: TextureHandle,
-    pub uv: UvCoords,
-    pub size: UvCoords,
-}
-
-type MutTexturePart = Cell<Box<dyn TexturePart>>;
-
 pub struct Sprite2D {
-    texture_part: TexturePart,
     pos: WorldCoords,
     rotation: f32,
     size: WorldCoords,
     color: ColorRgba,
+    texture: Texture,
+    mesh: Mesh,
 }
 
 impl Sprite2D {
     /// Draws sprite on screen.
-    pub fn draw(&self, renderer: &impl RenderSprite) {
-        let render_result = renderer.render(&self.texture_part, self.get_transforms(), self.color);
-        if let Err(RenderError::TextureNotLoaded) = render_result {
-            self.texture_part =
-        }
+    pub fn draw(&self, renderer: &mut impl Renderer) {
+        let rotation = Quat::from_rotation_z(self.rotation);
+        let transforms = Mat4::from_scale_rotation_translation(
+            self.size.get_inner(),
+            rotation,
+            self.pos.get_inner(),
+        );
+
+        let mesh_info = self.mesh_info();
+        renderer.render_textured_mesh(mesh_info, self.texture)
     }
 
     /// Returns top left world position of sprite.

@@ -1,6 +1,6 @@
 mod main_page;
-use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::main_menu::page::main_page::MainPageEvent;
+use crate::hex_war_app::LogCursor;
 use main_page::MainPage;
 use slog::Logger;
 use winit::event::{ElementState, MouseButton};
@@ -33,7 +33,7 @@ impl Page {
         Page::Main(MainPage::new(logger))
     }
 
-    pub fn cursor_moved(&mut self, cursor: &mut Cursor) {
+    pub fn cursor_moved(&mut self, cursor: &mut LogCursor) {
         match self {
             Page::Main(page) => page.cursor_moved(cursor),
             Page::Settings => {}
@@ -44,7 +44,7 @@ impl Page {
         &mut self,
         button: MouseButton,
         state: ElementState,
-        cursor: &mut Cursor,
+        cursor: &mut LogCursor,
     ) -> Option<PageEvent> {
         match self {
             Page::Main(page) => page.button_used(button, state, cursor).map(|e| e.into()),

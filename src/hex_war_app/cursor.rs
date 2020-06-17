@@ -1,13 +1,18 @@
 use crate::coords::ScreenCoords;
 
-#[derive(Debug)]
-pub struct Cursor {
-    pos: ScreenCoords,
+pub trait CursorRenderer {
+    fn render(&self, pos: ScreenCoords);
 }
 
-impl Cursor {
-    pub fn new(pos: ScreenCoords) -> Self {
-        Self { pos }
+#[derive(Debug)]
+pub struct Cursor<R> {
+    pos: ScreenCoords,
+    renderer: R,
+}
+
+impl<R: CursorRenderer> Cursor<R> {
+    pub fn new(pos: ScreenCoords, renderer: R) -> Self {
+        Self { pos, renderer }
     }
 
     pub fn get_pos(&self) -> ScreenCoords {
@@ -16,5 +21,9 @@ impl Cursor {
 
     pub fn move_to(&mut self, pos: ScreenCoords) {
         self.pos = pos
+    }
+
+    pub fn draw(&self) {
+        self.renderer.render(self.get_pos())
     }
 }

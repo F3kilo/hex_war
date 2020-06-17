@@ -1,12 +1,14 @@
 pub mod cursor;
+mod cursor_renderer;
 pub mod main_menu;
 pub mod state;
 pub mod update_timer;
 
 use crate::app::{App, ELWT};
-use crate::hex_war_app::cursor::Cursor;
-use crate::hex_war_app::update_timer::UpdateTimer;
 use crate::coords::ScreenCoords;
+use crate::hex_war_app::cursor::Cursor;
+use crate::hex_war_app::cursor_renderer::LoggedCursor;
+use crate::hex_war_app::update_timer::UpdateTimer;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
@@ -14,17 +16,19 @@ use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
 
+pub type LogCursor = Cursor<LoggedCursor>;
+
 pub struct HexWarApp {
     window: Window,
     logger: Logger,
     state: State,
-    cursor: Cursor,
+    cursor: LogCursor,
     update_timer: UpdateTimer,
 }
 
 impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
-        let cursor = Cursor::new(ScreenCoords::zero());
+        let cursor = Cursor::new(ScreenCoords::zero(), LoggedCursor::new(logger.clone()));
         let update_timer = UpdateTimer::new(60);
         trace!(logger, "HexWarApp initialized");
         Self {
@@ -62,6 +66,7 @@ impl HexWarApp {
     pub fn update(&mut self) {
         trace!(self.logger, "HexWarApp updating.");
         self.update_timer.update();
+        self.window.request_redraw();
     }
 
     pub fn is_finished(&self) -> bool {
@@ -80,6 +85,7 @@ impl HexWarApp {
     }
     pub fn draw(&mut self) {
         trace!(self.logger, "HexWarApp draw.");
+        self.cursor.draw();
     }
 }
 

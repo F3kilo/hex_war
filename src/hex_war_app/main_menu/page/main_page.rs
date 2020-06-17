@@ -1,4 +1,5 @@
 use crate::hex_war_app::cursor::Cursor;
+use crate::hex_war_app::LogCursor;
 use slog::Logger;
 use winit::event::{ElementState, MouseButton};
 
@@ -19,7 +20,7 @@ impl MainPage {
         Self { logger }
     }
 
-    pub fn cursor_moved(&mut self, cursor: &mut Cursor) {
+    pub fn cursor_moved(&mut self, cursor: &mut LogCursor) {
         trace!(
             self.logger,
             "MainPage cursor moved to: {:?}",
@@ -31,7 +32,7 @@ impl MainPage {
         &mut self,
         button: MouseButton,
         state: ElementState,
-        cursor: &mut Cursor,
+        cursor: &mut LogCursor,
     ) -> Option<MainPageEvent> {
         trace!(
             self.logger,

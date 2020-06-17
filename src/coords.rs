@@ -1,4 +1,4 @@
-use glam::Vec2;
+use glam::Vec3;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Debug, Default, PartialOrd, PartialEq, Copy, Clone)]
@@ -24,21 +24,25 @@ impl From<(u32, u32)> for ScreenCoords {
 }
 
 #[derive(Debug, Default, PartialOrd, PartialEq, Copy, Clone)]
-pub struct WorldCoords(Vec2);
+pub struct WorldCoords(Vec3);
 
 impl WorldCoords {
-    pub fn new(x: f32, y: f32) -> Self {
-        Self(Vec2::new(x, y))
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        Self(Vec3::new(x, y, z))
     }
 
     pub fn zero() -> Self {
-        Self(Vec2::zero())
+        Self(Vec3::zero())
+    }
+
+    pub fn get_inner(&self) -> Vec3 {
+        self.0
     }
 }
 
-impl From<(f32, f32)> for WorldCoords {
-    fn from((x, y): (f32, f32)) -> Self {
-        Self::new(x, y)
+impl From<(f32, f32, f32)> for WorldCoords {
+    fn from((x, y, z): (f32, f32, f32)) -> Self {
+        Self::new(x, y, z)
     }
 }
 
