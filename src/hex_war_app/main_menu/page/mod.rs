@@ -1,6 +1,6 @@
 mod main_page;
-use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::main_menu::page::main_page::MainPageEvent;
+use crate::hex_war_app::Cursor;
 use main_page::MainPage;
 use slog::Logger;
 use winit::event::{ElementState, MouseButton};

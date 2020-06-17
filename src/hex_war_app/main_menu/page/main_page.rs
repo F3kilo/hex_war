@@ -1,4 +1,4 @@
-use crate::hex_war_app::cursor::Cursor;
+use crate::hex_war_app::Cursor;
 use slog::Logger;
 use winit::event::{ElementState, MouseButton};
 
