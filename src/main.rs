@@ -1,8 +1,9 @@
 mod app;
 mod app_init_error;
 mod event_loop;
+mod graphics;
 mod hex_war_app;
-mod screen_coords;
+mod math;
 
 #[macro_use]
 extern crate slog;

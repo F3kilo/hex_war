@@ -7,17 +7,17 @@ use std::ops::{
 pub type Int = i64;
 
 #[derive(Debug, Default, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub struct IVec2(Int, Int);
+pub struct ScreenCoords(Int, Int);
 
-pub fn ivec2(x: Int, y: Int) -> IVec2 {
-    IVec2(x, y)
+pub fn ivec2(x: Int, y: Int) -> ScreenCoords {
+    ScreenCoords(x, y)
 }
 
-impl IVec2 {
+impl ScreenCoords {
     /// Returns a new `Vec4` with elements representing the sign of `self`.
     ///
-    /// - `1.0` if the number is positive, `+0.0` or `INFINITY`
-    /// - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
+    /// - `1.0` if the number is positive
+    /// - `-1.0` if the number is negative
     #[inline]
     pub fn sign(self) -> Self {
         let x = if self.0 > 0 { 1 } else { -1 };
@@ -25,47 +25,40 @@ impl IVec2 {
         Self(x, y)
     }
 
-    /// Computes the reciprocal `1.0/n` of each element, returning the
-    /// results in a new `Vec2`.
-    #[inline]
-    pub fn reciprocal(self) -> Self {
-        Self::one() / self
-    }
-
     /// Creates a new `IVec2`.
     #[inline]
-    pub fn new(x: Int, y: Int) -> IVec2 {
-        IVec2(x, y)
+    pub fn new(x: Int, y: Int) -> ScreenCoords {
+        ScreenCoords(x, y)
     }
 
-    /// Creates a new `IVec2` with all elements set to `0.0`.
+    /// Creates a new `IVec2` with all elements set to `0`.
     #[inline]
-    pub fn zero() -> IVec2 {
-        IVec2(0, 0)
+    pub fn zero() -> ScreenCoords {
+        ScreenCoords(0, 0)
     }
 
-    /// Creates a new `IVec2` with all elements set to `1.0`.
+    /// Creates a new `IVec2` with all elements set to `1`.
     #[inline]
-    pub fn one() -> IVec2 {
-        IVec2(1, 1)
+    pub fn one() -> ScreenCoords {
+        ScreenCoords(1, 1)
     }
 
-    /// Creates a new `IVec2` with values `[x: 1.0, y: 0.0]`.
+    /// Creates a new `IVec2` with values `[x: 1, y: 0]`.
     #[inline]
-    pub fn unit_x() -> IVec2 {
-        IVec2(1, 0)
+    pub fn unit_x() -> ScreenCoords {
+        ScreenCoords(1, 0)
     }
 
-    /// Creates a new `IVec2` with values `[x: 0.0, y: 1.0]`.
+    /// Creates a new `IVec2` with values `[x: 0, y: 1]`.
     #[inline]
-    pub fn unit_y() -> IVec2 {
-        IVec2(0, 1)
+    pub fn unit_y() -> ScreenCoords {
+        ScreenCoords(0, 1)
     }
 
     /// Creates a new `IVec2` with all elements set to `v`.
     #[inline]
-    pub fn splat(v: Int) -> IVec2 {
-        IVec2(v, v)
+    pub fn splat(v: Int) -> ScreenCoords {
+        ScreenCoords(v, v)
     }
 
     /// Returns element `x`.
@@ -106,7 +99,7 @@ impl IVec2 {
 
     /// Computes the dot product of `self` and `other`.
     #[inline]
-    pub fn dot(self, other: IVec2) -> Int {
+    pub fn dot(self, other: ScreenCoords) -> Int {
         (self.0 * other.0) + (self.1 * other.1)
     }
 
@@ -139,8 +132,8 @@ impl IVec2 {
     /// `[x: min(x1, x2), y: min(y1, y2)]`,
     /// taking the minimum of each element individually.
     #[inline]
-    pub fn min(self, other: IVec2) -> IVec2 {
-        IVec2(self.0.min(other.0), self.1.min(other.1))
+    pub fn min(self, other: ScreenCoords) -> ScreenCoords {
+        ScreenCoords(self.0.min(other.0), self.1.min(other.1))
     }
 
     /// Returns the vertical maximum of `self` and `other`.
@@ -149,8 +142,8 @@ impl IVec2 {
     /// `[x: max(x1, x2), y: max(y1, y2)]`,
     /// taking the maximum of each element individually.
     #[inline]
-    pub fn max(self, other: IVec2) -> IVec2 {
-        IVec2(self.0.max(other.0), self.1.max(other.1))
+    pub fn max(self, other: ScreenCoords) -> ScreenCoords {
+        ScreenCoords(self.0.max(other.0), self.1.max(other.1))
     }
 
     /// Returns the horizontal minimum of `self`'s elements.
@@ -174,7 +167,7 @@ impl IVec2 {
     ///
     /// In other words, this computes `[x1 == x2, y1 == y2, z1 == z2, w1 == w2]`.
     #[inline]
-    pub fn cmpeq(self, other: IVec2) -> Vec2Mask {
+    pub fn cmpeq(self, other: ScreenCoords) -> Vec2Mask {
         Vec2Mask::new(self.0.eq(&other.0), self.1.eq(&other.1))
     }
 
@@ -183,7 +176,7 @@ impl IVec2 {
     ///
     /// In other words, this computes `[x1 != x2, y1 != y2, z1 != z2, w1 != w2]`.
     #[inline]
-    pub fn cmpne(self, other: IVec2) -> Vec2Mask {
+    pub fn cmpne(self, other: ScreenCoords) -> Vec2Mask {
         Vec2Mask::new(self.0.ne(&other.0), self.1.ne(&other.1))
     }
 
@@ -192,7 +185,7 @@ impl IVec2 {
     ///
     /// In other words, this computes `[x1 >= x2, y1 >= y2, z1 >= z2, w1 >= w2]`.
     #[inline]
-    pub fn cmpge(self, other: IVec2) -> Vec2Mask {
+    pub fn cmpge(self, other: ScreenCoords) -> Vec2Mask {
         Vec2Mask::new(self.0.ge(&other.0), self.1.ge(&other.1))
     }
 
@@ -201,7 +194,7 @@ impl IVec2 {
     ///
     /// In other words, this computes `[x1 > x2, y1 > y2, z1 > z2, w1 > w2]`.
     #[inline]
-    pub fn cmpgt(self, other: IVec2) -> Vec2Mask {
+    pub fn cmpgt(self, other: ScreenCoords) -> Vec2Mask {
         Vec2Mask::new(self.0.gt(&other.0), self.1.gt(&other.1))
     }
 
@@ -210,7 +203,7 @@ impl IVec2 {
     ///
     /// In other words, this computes `[x1 <= x2, y1 <= y2, z1 <= z2, w1 <= w2]`.
     #[inline]
-    pub fn cmple(self, other: IVec2) -> Vec2Mask {
+    pub fn cmple(self, other: ScreenCoords) -> Vec2Mask {
         Vec2Mask::new(self.0.le(&other.0), self.1.le(&other.1))
     }
 
@@ -219,7 +212,7 @@ impl IVec2 {
     ///
     /// In other words, this computes `[x1 < x2, y1 < y2, z1 < z2, w1 < w2]`.
     #[inline]
-    pub fn cmplt(self, other: IVec2) -> Vec2Mask {
+    pub fn cmplt(self, other: ScreenCoords) -> Vec2Mask {
         Vec2Mask::new(self.0.lt(&other.0), self.1.lt(&other.1))
     }
 
@@ -232,7 +225,7 @@ impl IVec2 {
 
     /// The perpendicular dot product of the vector and `other`.
     #[inline]
-    pub fn perp_dot(self, other: IVec2) -> Int {
+    pub fn perp_dot(self, other: ScreenCoords) -> Int {
         (self.0 * other.1) - (self.1 * other.0)
     }
 
@@ -248,29 +241,29 @@ impl IVec2 {
     }
 }
 
-impl fmt::Display for IVec2 {
+impl fmt::Display for ScreenCoords {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "[{}, {}]", self.0, self.1)
     }
 }
 
-impl Div<IVec2> for IVec2 {
+impl Div<ScreenCoords> for ScreenCoords {
     type Output = Self;
     #[inline]
-    fn div(self, other: IVec2) -> Self {
+    fn div(self, other: ScreenCoords) -> Self {
         Self(self.0 / other.0, self.1 / other.1)
     }
 }
 
-impl DivAssign<IVec2> for IVec2 {
+impl DivAssign<ScreenCoords> for ScreenCoords {
     #[inline]
-    fn div_assign(&mut self, other: IVec2) {
+    fn div_assign(&mut self, other: ScreenCoords) {
         self.0 /= other.0;
         self.1 /= other.1;
     }
 }
 
-impl Div<Int> for IVec2 {
+impl Div<Int> for ScreenCoords {
     type Output = Self;
     #[inline]
     fn div(self, other: Int) -> Self {
@@ -278,7 +271,7 @@ impl Div<Int> for IVec2 {
     }
 }
 
-impl DivAssign<Int> for IVec2 {
+impl DivAssign<Int> for ScreenCoords {
     #[inline]
     fn div_assign(&mut self, other: Int) {
         self.0 /= other;
@@ -286,23 +279,23 @@ impl DivAssign<Int> for IVec2 {
     }
 }
 
-impl Mul<IVec2> for IVec2 {
+impl Mul<ScreenCoords> for ScreenCoords {
     type Output = Self;
     #[inline]
-    fn mul(self, other: IVec2) -> Self {
+    fn mul(self, other: ScreenCoords) -> Self {
         Self(self.0 * other.0, self.1 * other.1)
     }
 }
 
-impl MulAssign<IVec2> for IVec2 {
+impl MulAssign<ScreenCoords> for ScreenCoords {
     #[inline]
-    fn mul_assign(&mut self, other: IVec2) {
+    fn mul_assign(&mut self, other: ScreenCoords) {
         self.0 *= other.0;
         self.1 *= other.1;
     }
 }
 
-impl Mul<Int> for IVec2 {
+impl Mul<Int> for ScreenCoords {
     type Output = Self;
     #[inline]
     fn mul(self, other: Int) -> Self {
@@ -310,7 +303,7 @@ impl Mul<Int> for IVec2 {
     }
 }
 
-impl MulAssign<Int> for IVec2 {
+impl MulAssign<Int> for ScreenCoords {
     #[inline]
     fn mul_assign(&mut self, other: Int) {
         self.0 *= other;
@@ -318,15 +311,15 @@ impl MulAssign<Int> for IVec2 {
     }
 }
 
-impl Mul<IVec2> for Int {
-    type Output = IVec2;
+impl Mul<ScreenCoords> for Int {
+    type Output = ScreenCoords;
     #[inline]
-    fn mul(self, other: IVec2) -> IVec2 {
-        IVec2(self * other.0, self * other.1)
+    fn mul(self, other: ScreenCoords) -> ScreenCoords {
+        ScreenCoords(self * other.0, self * other.1)
     }
 }
 
-impl Add for IVec2 {
+impl Add for ScreenCoords {
     type Output = Self;
     #[inline]
     fn add(self, other: Self) -> Self {
@@ -334,7 +327,7 @@ impl Add for IVec2 {
     }
 }
 
-impl AddAssign for IVec2 {
+impl AddAssign for ScreenCoords {
     #[inline]
     fn add_assign(&mut self, other: Self) {
         self.0 += other.0;
@@ -342,23 +335,23 @@ impl AddAssign for IVec2 {
     }
 }
 
-impl Sub for IVec2 {
+impl Sub for ScreenCoords {
     type Output = Self;
     #[inline]
-    fn sub(self, other: IVec2) -> Self {
+    fn sub(self, other: ScreenCoords) -> Self {
         Self(self.0 - other.0, self.1 - other.1)
     }
 }
 
-impl SubAssign for IVec2 {
+impl SubAssign for ScreenCoords {
     #[inline]
-    fn sub_assign(&mut self, other: IVec2) {
+    fn sub_assign(&mut self, other: ScreenCoords) {
         self.0 -= other.0;
         self.1 -= other.1;
     }
 }
 
-impl Neg for IVec2 {
+impl Neg for ScreenCoords {
     type Output = Self;
     #[inline]
     fn neg(self) -> Self {
@@ -366,21 +359,21 @@ impl Neg for IVec2 {
     }
 }
 
-impl AsRef<[Int; 2]> for IVec2 {
+impl AsRef<[Int; 2]> for ScreenCoords {
     #[inline]
     fn as_ref(&self) -> &[Int; 2] {
-        unsafe { &*(self as *const IVec2 as *const [Int; 2]) }
+        unsafe { &*(self as *const ScreenCoords as *const [Int; 2]) }
     }
 }
 
-impl AsMut<[Int; 2]> for IVec2 {
+impl AsMut<[Int; 2]> for ScreenCoords {
     #[inline]
     fn as_mut(&mut self) -> &mut [Int; 2] {
-        unsafe { &mut *(self as *mut IVec2 as *mut [Int; 2]) }
+        unsafe { &mut *(self as *mut ScreenCoords as *mut [Int; 2]) }
     }
 }
 
-impl Index<usize> for IVec2 {
+impl Index<usize> for ScreenCoords {
     type Output = Int;
     #[inline]
     fn index(&self, index: usize) -> &Self::Output {
@@ -388,37 +381,37 @@ impl Index<usize> for IVec2 {
     }
 }
 
-impl IndexMut<usize> for IVec2 {
+impl IndexMut<usize> for ScreenCoords {
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.as_mut()[index]
     }
 }
 
-impl From<(Int, Int)> for IVec2 {
+impl From<(Int, Int)> for ScreenCoords {
     #[inline]
     fn from(t: (Int, Int)) -> Self {
         Self(t.0, t.1)
     }
 }
 
-impl From<IVec2> for (Int, Int) {
+impl From<ScreenCoords> for (Int, Int) {
     #[inline]
-    fn from(v: IVec2) -> Self {
+    fn from(v: ScreenCoords) -> Self {
         (v.0, v.1)
     }
 }
 
-impl From<[Int; 2]> for IVec2 {
+impl From<[Int; 2]> for ScreenCoords {
     #[inline]
     fn from(a: [Int; 2]) -> Self {
         Self(a[0], a[1])
     }
 }
 
-impl From<IVec2> for [Int; 2] {
+impl From<ScreenCoords> for [Int; 2] {
     #[inline]
-    fn from(v: IVec2) -> Self {
+    fn from(v: ScreenCoords) -> Self {
         [v.0, v.1]
     }
 }

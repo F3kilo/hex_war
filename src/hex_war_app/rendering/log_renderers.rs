@@ -1,5 +1,5 @@
 use crate::hex_war_app::cursor::{CursorRenderer, State};
-use crate::screen_coords::ScreenCoords;
+use crate::math::screen_coords::ScreenCoords;
 use slog::Logger;
 
 pub struct CursorLogRenderer {

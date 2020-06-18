@@ -1,4 +1,4 @@
-use crate::screen_coords::ScreenCoords;
+use crate::math::screen_coords::ScreenCoords;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum State {

@@ -1,5 +1,5 @@
-use crate::graphics::ivec::IVec2;
 use crate::graphics::{LoadError, NotFoundError};
+use crate::math::screen_coords::ScreenCoords;
 use std::cmp::Ordering;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
@@ -12,7 +12,7 @@ pub struct TextureId(u64);
 pub trait TextureManager {
     fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError>;
     fn drop_texture(&mut self, id: TextureId) -> bool;
-    fn get_size(&self, id: TextureId) -> Result<IVec2, NotFoundError>;
+    fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError>;
     fn get_path(&self, id: TextureId) -> Result<&Path, NotFoundError>;
 }
 
@@ -29,7 +29,7 @@ impl Texture {
         Ok(Self { id, manager })
     }
 
-    pub fn get_size(&self) -> IVec2 {
+    pub fn get_size(&self) -> ScreenCoords {
         self.manager.get_size(self.id).unwrap()
     }
 

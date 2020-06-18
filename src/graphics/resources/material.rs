@@ -1,4 +1,4 @@
-use crate::graphics::texture::SharedTexture;
+use crate::graphics::resources::texture::SharedTexture;
 use crate::graphics::{LoadError, NotFoundError};
 use palette::Srgba;
 use std::cmp::Ordering;

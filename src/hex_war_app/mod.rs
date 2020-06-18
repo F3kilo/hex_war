@@ -7,13 +7,13 @@ pub mod update_timer;
 use crate::app::{App, ELWT};
 use crate::hex_war_app::rendering::log_renderers::CursorLogRenderer;
 use crate::hex_war_app::update_timer::UpdateTimer;
-use crate::screen_coords::ScreenCoords;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
+use crate::math::screen_coords::ScreenCoords;
 
 pub type Cursor = cursor::Cursor<CursorLogRenderer>;
 
