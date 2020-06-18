@@ -1,6 +1,6 @@
 use crate::graphics::ivec::IVec2;
+use crate::graphics::{LoadError, NotFoundError};
 use std::cmp::Ordering;
-use std::error::Error;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -10,30 +10,10 @@ use std::{fmt, hash};
 pub struct TextureId(u64);
 
 pub trait TextureManager {
-    fn load_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError>;
+    fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError>;
     fn drop_texture(&mut self, id: TextureId) -> bool;
     fn get_size(&self, id: TextureId) -> Result<IVec2, NotFoundError>;
     fn get_path(&self, id: TextureId) -> Result<&Path, NotFoundError>;
-}
-
-#[derive(Debug)]
-pub enum LoadError {}
-
-impl Error for LoadError {}
-impl fmt::Display for LoadError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Can't load texture")
-    }
-}
-
-#[derive(Debug)]
-pub enum NotFoundError {}
-
-impl Error for NotFoundError {}
-impl fmt::Display for NotFoundError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Texture with specified id is not loaded.")
-    }
 }
 
 type SharedManager = Rc<dyn TextureManager>;
@@ -45,7 +25,7 @@ pub struct Texture {
 
 impl Texture {
     pub fn new(path: PathBuf, mut manager: SharedManager) -> Result<Self, LoadError> {
-        let id = manager.load_texture(path)?;
+        let id = manager.create_texture(path)?;
         Ok(Self { id, manager })
     }
 

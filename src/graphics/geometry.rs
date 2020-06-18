@@ -1,5 +1,5 @@
+use crate::graphics::{LoadError, NotFoundError};
 use std::cmp::Ordering;
-use std::error::Error;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -9,29 +9,9 @@ use std::{fmt, hash};
 pub struct GeometryId(u64);
 
 pub trait GeometryManager {
-    fn load_geometry(&mut self, path: PathBuf) -> Result<GeometryId, LoadError>;
+    fn create_geometry(&mut self, path: PathBuf) -> Result<GeometryId, LoadError>;
     fn drop_geometry(&mut self, id: GeometryId) -> bool;
     fn get_path(&self, id: GeometryId) -> Result<&Path, NotFoundError>;
-}
-
-#[derive(Debug)]
-pub enum LoadError {}
-
-impl Error for LoadError {}
-impl fmt::Display for LoadError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Can't load texture")
-    }
-}
-
-#[derive(Debug)]
-pub enum NotFoundError {}
-
-impl Error for NotFoundError {}
-impl fmt::Display for NotFoundError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Texture with specified id is not loaded.")
-    }
 }
 
 type SharedManager = Rc<dyn GeometryManager>;
@@ -43,7 +23,7 @@ pub struct Geometry {
 
 impl Geometry {
     pub fn new(path: PathBuf, mut manager: SharedManager) -> Result<Self, LoadError> {
-        let id = manager.load_geometry(path)?;
+        let id = manager.create_geometry(path)?;
         Ok(Self { id, manager })
     }
 
