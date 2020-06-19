@@ -22,9 +22,11 @@ pub trait MaterialManager {
 
     fn set_color(&mut self, id: MaterialId, color: Srgba) -> Result<(), NotFoundError>;
     fn get_color(&self, id: MaterialId) -> Result<Srgba, NotFoundError>;
+
+    fn ids(&self) -> &dyn Iterator<Item = MaterialId>;
 }
 
-type SharedManager = Rc<dyn MaterialManager>;
+pub type SharedManager = Rc<dyn MaterialManager>;
 
 pub struct Material {
     id: MaterialId,

@@ -12,9 +12,11 @@ pub trait GeometryManager {
     fn create_geometry(&mut self, path: PathBuf) -> Result<GeometryId, LoadError>;
     fn drop_geometry(&mut self, id: GeometryId) -> bool;
     fn get_path(&self, id: GeometryId) -> Result<&Path, NotFoundError>;
+
+    fn ids(&self) -> &dyn Iterator<Item = GeometryId>;
 }
 
-type SharedManager = Rc<dyn GeometryManager>;
+pub type SharedManager = Rc<dyn GeometryManager>;
 
 pub struct Geometry {
     id: GeometryId,

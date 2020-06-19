@@ -1,6 +1,5 @@
-use crate::graphics::resources::geometry::SharedGeometry;
-use crate::graphics::resources::material::SharedMaterial;
 use crate::graphics::resources::view::SharedView;
+use crate::graphics::resources::{geometry, material, texture, view, Resources};
 use glam::Mat4;
 use std::error::Error;
 use std::fmt;
@@ -28,14 +27,16 @@ impl fmt::Display for NotFoundError {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
-struct Resources {
-    pub material: SharedMaterial,
-    pub geometry: SharedGeometry,
-    pub view: SharedView,
-}
+pub trait RenderBackend {
+    fn get_view_manager(&self) -> &view::SharedManager;
+    fn get_material_manager(&self) -> &material::SharedManager;
+    fn get_texture_manager(&self) -> &texture::SharedManager;
+    fn get_geometry_manager(&self) -> &geometry::SharedManager;
 
-pub struct RenderBackend {}
+    fn render(&mut self, resources: &Resources, transforms: &Transforms);
+    fn apply_view(&mut self, view: SharedView);
+    fn present(&mut self);
+}
 
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Transforms {
@@ -43,8 +44,14 @@ pub struct Transforms {
     pub uv: Mat4,
 }
 
-pub struct Renderer {}
+pub struct Renderer {
+    backend: Box<dyn RenderBackend>,
+}
 
 impl Renderer {
-    fn new(backend: RenderBackend) -> Self {}
+    fn new(backend: Box<dyn RenderBackend>) -> Self {
+        Self { backend }
+    }
+
+    fn render(&mut self, resources: &Resources, transforms: &Transforms) {}
 }

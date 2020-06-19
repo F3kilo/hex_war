@@ -18,6 +18,8 @@ pub trait ViewManager {
     fn set_view_transforms(&mut self, id: ViewId, transforms: Mat4) -> Result<(), NotFoundError>;
     fn get_proj_transforms(&self, id: ViewId) -> Result<&Mat4, NotFoundError>;
     fn set_proj_transforms(&mut self, id: ViewId, transforms: Mat4) -> Result<(), NotFoundError>;
+
+    fn ids(&self) -> &dyn Iterator<Item = ViewId>;
 }
 
 #[derive(Debug, Default, Copy, Clone)]
@@ -27,7 +29,7 @@ struct Transforms {
     proj: Mat4,
 }
 
-type SharedManager = Rc<dyn ViewManager>;
+pub type SharedManager = Rc<dyn ViewManager>;
 
 pub struct View {
     id: ViewId,

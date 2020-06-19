@@ -14,9 +14,11 @@ pub trait TextureManager {
     fn drop_texture(&mut self, id: TextureId) -> bool;
     fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError>;
     fn get_path(&self, id: TextureId) -> Result<&Path, NotFoundError>;
+
+    fn ids(&self) -> &dyn Iterator<Item = TextureId>;
 }
 
-type SharedManager = Rc<dyn TextureManager>;
+pub type SharedManager = Rc<dyn TextureManager>;
 
 pub struct Texture {
     id: TextureId,

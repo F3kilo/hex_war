@@ -1,4 +1,5 @@
-use crate::graphics::{Renderer, Resources, Transforms};
+use crate::graphics::resources::Resources;
+use crate::graphics::{Renderer, Transforms};
 use crate::math::world_coords::WorldCoords;
 use glam::{Mat4, Quat};
 
