@@ -1,3 +1,4 @@
+use crate::graphics::Renderer;
 use crate::math::screen_coords::ScreenCoords;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]

@@ -20,12 +20,12 @@ pub trait TextureManager {
 
 pub type SharedManager = Rc<dyn TextureManager>;
 
-pub struct Texture {
+pub struct UniqueTexture {
     id: TextureId,
     manager: SharedManager,
 }
 
-impl Texture {
+impl UniqueTexture {
     pub fn new(path: PathBuf, mut manager: SharedManager) -> Result<Self, LoadError> {
         let id = manager.create_texture(path)?;
         Ok(Self { id, manager })
@@ -44,13 +44,13 @@ impl Texture {
     }
 }
 
-impl Drop for Texture {
+impl Drop for UniqueTexture {
     fn drop(&mut self) {
         self.manager.drop_texture(self.id);
     }
 }
 
-impl fmt::Debug for Texture {
+impl fmt::Debug for UniqueTexture {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -61,42 +61,42 @@ impl fmt::Debug for Texture {
     }
 }
 
-impl PartialEq for Texture {
+impl PartialEq for UniqueTexture {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
     }
 }
 
-impl PartialEq<TextureId> for Texture {
+impl PartialEq<TextureId> for UniqueTexture {
     fn eq(&self, id: &TextureId) -> bool {
         self.id == *id
     }
 }
 
-impl Eq for Texture {}
+impl Eq for UniqueTexture {}
 
-impl Hash for Texture {
+impl Hash for UniqueTexture {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         self.id.hash(state)
     }
 }
 
-impl PartialOrd for Texture {
+impl PartialOrd for UniqueTexture {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.id.partial_cmp(&other.id)
     }
 }
 
-impl PartialOrd<TextureId> for Texture {
+impl PartialOrd<TextureId> for UniqueTexture {
     fn partial_cmp(&self, id: &TextureId) -> Option<Ordering> {
         self.id.partial_cmp(&id)
     }
 }
 
-impl Ord for Texture {
+impl Ord for UniqueTexture {
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap()
     }
 }
 
-pub type SharedTexture = Rc<Texture>;
+pub type Texture = Rc<UniqueTexture>;

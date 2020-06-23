@@ -1,9 +1,11 @@
 use crate::graphics::{LoadError, NotFoundError};
 use glam::Mat4;
+use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::hash::Hash;
 use std::rc::Rc;
 use std::{fmt, hash};
+use std::borrow::BorrowMut;
 
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone, Ord, PartialOrd)]
 pub struct ViewId(u64);
@@ -23,7 +25,7 @@ pub trait ViewManager {
 }
 
 #[derive(Debug, Default, Copy, Clone)]
-struct Transforms {
+pub struct Transforms {
     world: Mat4,
     view: Mat4,
     proj: Mat4,
@@ -31,37 +33,37 @@ struct Transforms {
 
 pub type SharedManager = Rc<dyn ViewManager>;
 
-pub struct View {
+pub struct UniqueView {
     id: ViewId,
     manager: SharedManager,
 }
 
-impl View {
+impl UniqueView {
     pub fn new(mut manager: SharedManager, transforms: Transforms) -> Result<Self, LoadError> {
         let id = manager.create_view(transforms)?;
         Ok(Self { id, manager })
     }
 
-    fn get_world_transforms(&self) -> &Mat4 {
+    pub fn get_world_transforms(&self) -> &Mat4 {
         self.manager.get_world_transforms(self.id).unwrap()
     }
-    fn set_world_transforms(&mut self, transforms: Mat4) {
+    pub fn set_world_transforms(&mut self, transforms: Mat4) {
         self.manager
             .set_world_transforms(self.id, transforms)
             .unwrap()
     }
-    fn get_view_transforms(&self) -> &Mat4 {
+    pub fn get_view_transforms(&self) -> &Mat4 {
         self.manager.get_view_transforms(self.id).unwrap()
     }
-    fn set_view_transforms(&mut self, transforms: Mat4) {
+    pub fn set_view_transforms(&mut self, transforms: Mat4) {
         self.manager
             .set_view_transforms(self.id, transforms)
             .unwrap()
     }
-    fn get_proj_transforms(&self) -> &Mat4 {
+    pub fn get_proj_transforms(&self) -> &Mat4 {
         self.manager.get_proj_transforms(self.id).unwrap()
     }
-    fn set_proj_transforms(&mut self, transforms: Mat4) {
+    pub fn set_proj_transforms(&mut self, transforms: Mat4) {
         self.manager
             .set_proj_transforms(self.id, transforms)
             .unwrap()
@@ -72,54 +74,54 @@ impl View {
     }
 }
 
-impl Drop for View {
+impl Drop for UniqueView {
     fn drop(&mut self) {
         self.manager.drop_view(self.id);
     }
 }
 
-impl fmt::Debug for View {
+impl fmt::Debug for UniqueView {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "View: id = {:?};", self.id,)
     }
 }
 
-impl PartialEq for View {
+impl PartialEq for UniqueView {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
     }
 }
 
-impl PartialEq<ViewId> for View {
+impl PartialEq<ViewId> for UniqueView {
     fn eq(&self, id: &ViewId) -> bool {
         self.id == *id
     }
 }
 
-impl Eq for View {}
+impl Eq for UniqueView {}
 
-impl Hash for View {
+impl Hash for UniqueView {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         self.id.hash(state)
     }
 }
 
-impl PartialOrd for View {
+impl PartialOrd for UniqueView {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.id.partial_cmp(&other.id)
     }
 }
 
-impl PartialOrd<ViewId> for View {
+impl PartialOrd<ViewId> for UniqueView {
     fn partial_cmp(&self, id: &ViewId) -> Option<Ordering> {
         self.id.partial_cmp(&id)
     }
 }
 
-impl Ord for View {
+impl Ord for UniqueView {
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap()
     }
 }
 
-pub type SharedView = Rc<View>;
+pub type View = Rc<UniqueView>;

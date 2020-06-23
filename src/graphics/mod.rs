@@ -1,8 +1,11 @@
-use crate::graphics::resources::view::SharedView;
+use crate::graphics::resources::texture::Texture;
+use crate::graphics::resources::view::View;
 use crate::graphics::resources::{geometry, material, texture, view, Resources};
 use glam::Mat4;
+use palette::Srgba;
 use std::error::Error;
 use std::fmt;
+use std::path::PathBuf;
 
 pub mod primitive;
 pub mod resources;
@@ -28,13 +31,13 @@ impl fmt::Display for NotFoundError {
 }
 
 pub trait RenderBackend {
-    fn get_view_manager(&self) -> &view::SharedManager;
-    fn get_material_manager(&self) -> &material::SharedManager;
-    fn get_texture_manager(&self) -> &texture::SharedManager;
-    fn get_geometry_manager(&self) -> &geometry::SharedManager;
+    fn create_view(&self, transforms: view::Transforms) -> view::View;
+    fn create_material(&self, color_map: texture::Texture, color: Srgba) -> material::Material;
+    fn create_texture(&self, path: PathBuf) -> texture::Texture;
+    fn create_geometry(&self, path: PathBuf) -> geometry::Geometry;
 
-    fn render(&mut self, resources: &Resources, transforms: &Transforms);
-    fn apply_view(&mut self, view: SharedView);
+    fn render(&mut self, resources: Resources, transforms: &Transforms);
+    fn apply_view(&mut self, view: view::View);
     fn present(&mut self);
 }
 
@@ -48,10 +51,18 @@ pub struct Renderer {
     backend: Box<dyn RenderBackend>,
 }
 
+struct PostEffect;
+
 impl Renderer {
     fn new(backend: Box<dyn RenderBackend>) -> Self {
         Self { backend }
     }
 
-    fn render(&mut self, resources: &Resources, transforms: &Transforms) {}
+    fn render(&mut self, view: &View, post_effects: &impl Iterator<Item = PostEffect>) -> Texture {}
+    fn present(
+        &mut self,
+        images: &impl Iterator<Item = Texture>,
+        post_effects: &impl Iterator<Item = PostEffect>,
+    ) {
+    }
 }

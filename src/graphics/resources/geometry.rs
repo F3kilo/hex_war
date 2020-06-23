@@ -1,4 +1,5 @@
 use crate::graphics::{LoadError, NotFoundError};
+use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
@@ -16,21 +17,21 @@ pub trait GeometryManager {
     fn ids(&self) -> &dyn Iterator<Item = GeometryId>;
 }
 
-pub type SharedManager = Rc<dyn GeometryManager>;
+pub type SharedManager = Rc<RefCell<dyn GeometryManager>>;
 
-pub struct Geometry {
+pub struct UniqueGeometry {
     id: GeometryId,
     manager: SharedManager,
 }
 
-impl Geometry {
-    pub fn new(path: PathBuf, mut manager: SharedManager) -> Result<Self, LoadError> {
-        let id = manager.create_geometry(path)?;
+impl UniqueGeometry {
+    pub fn new(path: PathBuf, manager: SharedManager) -> Result<Self, LoadError> {
+        let id = manager.borrow_mut().create_geometry(path)?;
         Ok(Self { id, manager })
     }
 
-    pub fn get_path(&self) -> &Path {
-        self.manager.get_path(self.id).unwrap()
+    pub fn get_path(&self) -> PathBuf {
+        self.manager.borrow().get_path(self.id).unwrap().into()
     }
 
     pub fn get_id(&self) -> GeometryId {
@@ -38,13 +39,13 @@ impl Geometry {
     }
 }
 
-impl Drop for Geometry {
+impl Drop for UniqueGeometry {
     fn drop(&mut self) {
-        self.manager.drop_geometry(self.id);
+        self.manager.borrow_mut().drop_geometry(self.id);
     }
 }
 
-impl fmt::Debug for Geometry {
+impl fmt::Debug for UniqueGeometry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -55,42 +56,42 @@ impl fmt::Debug for Geometry {
     }
 }
 
-impl PartialEq for Geometry {
+impl PartialEq for UniqueGeometry {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
     }
 }
 
-impl PartialEq<GeometryId> for Geometry {
+impl PartialEq<GeometryId> for UniqueGeometry {
     fn eq(&self, id: &GeometryId) -> bool {
         self.id == *id
     }
 }
 
-impl Eq for Geometry {}
+impl Eq for UniqueGeometry {}
 
-impl Hash for Geometry {
+impl Hash for UniqueGeometry {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         self.id.hash(state)
     }
 }
 
-impl PartialOrd for Geometry {
+impl PartialOrd for UniqueGeometry {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.id.partial_cmp(&other.id)
     }
 }
 
-impl PartialOrd<GeometryId> for Geometry {
+impl PartialOrd<GeometryId> for UniqueGeometry {
     fn partial_cmp(&self, id: &GeometryId) -> Option<Ordering> {
         self.id.partial_cmp(&id)
     }
 }
 
-impl Ord for Geometry {
+impl Ord for UniqueGeometry {
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap()
     }
 }
 
-pub type SharedGeometry = Rc<Geometry>;
+pub type Geometry = Rc<UniqueGeometry>;

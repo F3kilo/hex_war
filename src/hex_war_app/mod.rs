@@ -7,13 +7,13 @@ pub mod update_timer;
 use crate::app::{App, ELWT};
 use crate::hex_war_app::rendering::log_renderers::CursorLogRenderer;
 use crate::hex_war_app::update_timer::UpdateTimer;
+use crate::math::screen_coords::ScreenCoords;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
-use crate::math::screen_coords::ScreenCoords;
 
 pub type Cursor = cursor::Cursor<CursorLogRenderer>;
 
@@ -112,7 +112,7 @@ impl App for HexWarApp {
             }
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::Resized(new_size) => {
-                    let new_size: (u32, u32) = new_size.into();
+                    let new_size = (new_size.width as i64, new_size.height as i64);
                     self.window_resized(new_size.into());
                 }
                 WindowEvent::Moved(_) => {}
@@ -126,7 +126,7 @@ impl App for HexWarApp {
                 WindowEvent::KeyboardInput { .. } => {}
                 WindowEvent::ModifiersChanged(_) => {}
                 WindowEvent::CursorMoved { position, .. } => {
-                    let new_pos = (position.x as u32, position.y as u32).into();
+                    let new_pos = (position.x as i64, position.y as i64).into();
                     self.cursor_moved(new_pos)
                 }
                 WindowEvent::CursorEntered { .. } => {}

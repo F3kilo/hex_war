@@ -1,5 +1,5 @@
-use crate::graphics::resources::geometry::SharedGeometry;
+use crate::graphics::resources::geometry::Geometry;
 
 pub struct Square {
-    geom: SharedGeometry,
+    geom: Geometry,
 }

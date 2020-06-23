@@ -1,3 +1,4 @@
+use crate::graphics::Renderer;
 use crate::hex_war_app::cursor::{CursorRenderer, State};
 use crate::math::screen_coords::ScreenCoords;
 use slog::Logger;
