@@ -2,6 +2,7 @@ use crate::graphics::resources::geometry::Geometry;
 use crate::graphics::resources::texture::Texture;
 use crate::graphics::{LoadError, NotFoundError};
 use glam::{Mat4, Vec2};
+use palette::Srgba;
 use std::cell::{Ref, RefCell, RefMut};
 use std::cmp::Ordering;
 use std::hash::Hash;
@@ -11,27 +12,37 @@ use std::{fmt, hash};
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone, Ord, PartialOrd)]
 pub struct SceneId(u64);
 
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone)]
 pub struct UvTransforms {
     pub offset: Vec2,
     pub scale: Vec2,
+}
+
+impl Default for UvTransforms {
+    fn default() -> Self {
+        Self {
+            offset: Vec2::zero(),
+            scale: Vec2::one(),
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone, Default)]
 pub struct Instance {
     pub transforms: Mat4,
     pub uv_transforms: UvTransforms,
+    pub color: Srgba,
 }
 
 #[derive(Debug, Clone)]
 pub struct TexturedGeometry {
-    geometry: Geometry,
-    texture: Texture,
-    instance: Instance,
+    pub geometry: Geometry,
+    pub texture: Texture,
+    pub instance: Instance,
 }
 
 pub trait SceneManager {
-    fn create_scene(&mut self) -> Result<SceneId, LoadError>;
+    fn create_scene(&mut self) -> SceneId;
     fn drop_scene(&mut self, id: SceneId) -> bool;
 
     fn add_textured_geometry(
@@ -51,9 +62,9 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub fn new(manager: SharedManager) -> Result<Self, LoadError> {
-        let id = Self::get_mut_manager(&manager).create_scene()?;
-        Ok(Self { id, manager })
+    pub fn new(manager: SharedManager) -> Self {
+        let id = Self::get_mut_manager(&manager).create_scene();
+        Self { id, manager }
     }
 
     pub fn add_textured_geometry(&mut self, inst: TexturedGeometry) {

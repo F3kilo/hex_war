@@ -1,11 +1,15 @@
+use crate::graphics::backend::RenderBackend;
 use crate::graphics::resources::scene::Scene;
 use crate::graphics::resources::texture::Texture;
-use crate::graphics::resources::{geometry, texture};
+use crate::graphics::resources::{geometry, scene, texture};
+use crate::math::screen_coords::ScreenCoords;
+use crate::math::world_coords::WorldCoords;
 use glam::Mat4;
 use std::error::Error;
 use std::fmt;
 use std::path::PathBuf;
 
+pub mod backend;
 pub mod primitive;
 pub mod resources;
 
@@ -27,11 +31,6 @@ impl fmt::Display for NotFoundError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Resource with specified ID is not found.")
     }
-}
-
-pub trait RenderBackend {
-    fn create_texture(&self, path: PathBuf) -> texture::Texture;
-    fn create_geometry(&self, path: PathBuf) -> geometry::Geometry;
 }
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -60,21 +59,46 @@ pub struct RenderContext {
 }
 
 impl Renderer {
-    fn new(backend: Box<dyn RenderBackend>) -> Self {
+    pub fn new(backend: Box<dyn RenderBackend>) -> Self {
         Self { backend }
     }
 
-    fn render(
+    pub fn create_texture(&self, path: PathBuf) -> Result<texture::Texture, LoadError> {
+        self.backend.create_texture(path)
+    }
+    pub fn create_geometry(&self, path: PathBuf) -> Result<geometry::Geometry, LoadError> {
+        self.backend.create_geometry(path)
+    }
+    pub fn create_scene(&self) -> scene::Scene {
+        self.backend.create_scene()
+    }
+
+    pub fn render(
         &mut self,
         context: &RenderContext,
         scene: &Scene,
         post_effects: &impl Iterator<Item = PostEffect>,
     ) { // TODO: return Texture
     }
-    fn present(
+
+    pub fn present(
         &mut self,
         images: &impl Iterator<Item = Texture>,
         post_effects: &impl Iterator<Item = PostEffect>,
     ) {
     }
+}
+
+type Depth = f32;
+
+pub trait Camera {
+    fn to_world(&self, point: ScreenCoords, depth: Depth, screen_size: ScreenCoords)
+        -> WorldCoords;
+    fn to_screen(&self, world: WorldCoords) -> (ScreenCoords, Depth);
+
+    fn size_to_world(&self, screen: ScreenCoords, depth: Depth) -> WorldCoords;
+    fn size_to_screen(&self, world: WorldCoords) -> (ScreenCoords, Depth);
+
+    fn get_view_transform(&self) -> Mat4;
+    fn get_proj_transform(&self) -> Mat4;
 }

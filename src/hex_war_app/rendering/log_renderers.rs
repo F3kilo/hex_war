@@ -1,5 +1,6 @@
-use crate::graphics::Renderer;
-use crate::hex_war_app::cursor::{CursorRenderer, State};
+use crate::graphics::resources::scene::Scene;
+use crate::graphics::{Camera, Renderer};
+use crate::hex_war_app::cursor::{CursorRepresentation, State};
 use crate::math::screen_coords::ScreenCoords;
 use slog::Logger;
 
@@ -17,12 +18,12 @@ impl CursorLogRenderer {
     }
 }
 
-impl CursorRenderer for CursorLogRenderer {
+impl CursorRepresentation for CursorLogRenderer {
     fn set_state(&mut self, cursor_state: State) {
         self.cursor_state = cursor_state
     }
 
-    fn render(&self, position: ScreenCoords) {
+    fn add_to_scene(&self, position: ScreenCoords, scene: &mut Scene, camera: &impl Camera) {
         info!(
             self.logger,
             "Cursor: pos: ({:?}), state: {:?}", position, self.cursor_state

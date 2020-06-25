@@ -129,3 +129,9 @@ impl Neg for WorldCoords {
         Self(-self.0)
     }
 }
+
+impl From<Vec3> for WorldCoords {
+    fn from(v: Vec3) -> Self {
+        WorldCoords::new(v.x(), v.y(), v.z())
+    }
+}

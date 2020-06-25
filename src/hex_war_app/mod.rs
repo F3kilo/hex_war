@@ -1,10 +1,14 @@
 pub mod cursor;
 pub mod main_menu;
+mod planar_camera;
 pub mod rendering;
 pub mod state;
 pub mod update_timer;
 
 use crate::app::{App, ELWT};
+use crate::graphics::backend::vulkan::VulkanRenderer;
+use crate::graphics::resources::scene::Scene;
+use crate::graphics::Renderer;
 use crate::hex_war_app::rendering::log_renderers::CursorLogRenderer;
 use crate::hex_war_app::update_timer::UpdateTimer;
 use crate::math::screen_coords::ScreenCoords;
@@ -17,21 +21,32 @@ use winit::window::{Window, WindowId};
 
 pub type Cursor = cursor::Cursor<CursorLogRenderer>;
 
+#[derive(Debug)]
+struct Scenes {
+    ui: Scene,
+    game: Scene,
+}
+
 pub struct HexWarApp {
     window: Window,
     logger: Logger,
     state: State,
     cursor: Cursor,
     update_timer: UpdateTimer,
+    renderer: Renderer,
+    scenes: Scenes,
 }
 
 impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
-        let cursor = Cursor::new(
-            ScreenCoords::zero(),
-            CursorLogRenderer::new(logger.clone(), cursor::State::Released),
-        );
+        let cursor = HexWarApp::create_cursor(&logger);
         let update_timer = UpdateTimer::new(60);
+
+        let renderer = Renderer::new(Box::new(VulkanRenderer::new()));
+        let scenes = Scenes {
+            ui: renderer.create_scene(),
+            game: renderer.create_scene(),
+        };
         trace!(logger, "HexWarApp initialized");
         Self {
             window,
@@ -39,7 +54,16 @@ impl HexWarApp {
             state: State::Menu(MainMenu::new(logger)),
             cursor,
             update_timer,
+            renderer,
+            scenes,
         }
+    }
+
+    fn create_cursor(logger: &Logger) -> Cursor {
+        Cursor::new(
+            ScreenCoords::zero(),
+            CursorLogRenderer::new(logger.clone(), cursor::State::Released),
+        )
     }
 
     pub fn close_requested(&mut self) {
@@ -89,7 +113,8 @@ impl HexWarApp {
 
     pub fn draw(&mut self) {
         trace!(self.logger, "HexWarApp draw.");
-        self.cursor.render();
+        self.cursor
+            .add_to_scene(&mut self.scenes.ui, self.cameras.ui);
     }
 }
 
