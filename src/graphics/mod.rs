@@ -1,8 +1,7 @@
+use crate::graphics::resources::scene::Scene;
 use crate::graphics::resources::texture::Texture;
-use crate::graphics::resources::view::View;
-use crate::graphics::resources::{geometry, material, texture, view, Resources};
+use crate::graphics::resources::{geometry, texture};
 use glam::Mat4;
-use palette::Srgba;
 use std::error::Error;
 use std::fmt;
 use std::path::PathBuf;
@@ -31,14 +30,8 @@ impl fmt::Display for NotFoundError {
 }
 
 pub trait RenderBackend {
-    fn create_view(&self, transforms: view::Transforms) -> view::View;
-    fn create_material(&self, color_map: texture::Texture, color: Srgba) -> material::Material;
     fn create_texture(&self, path: PathBuf) -> texture::Texture;
     fn create_geometry(&self, path: PathBuf) -> geometry::Geometry;
-
-    fn render(&mut self, resources: Resources, transforms: &Transforms);
-    fn apply_view(&mut self, view: view::View);
-    fn present(&mut self);
 }
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -51,14 +44,33 @@ pub struct Renderer {
     backend: Box<dyn RenderBackend>,
 }
 
-struct PostEffect;
+#[derive(Debug, Clone)]
+pub struct PostEffect;
+
+#[derive(Debug, Copy, Clone, Default)]
+pub struct SceneTransforms {
+    pub world: Mat4,
+    pub view: Mat4,
+    pub proj: Mat4,
+}
+
+#[derive(Debug, Copy, Clone, Default)]
+pub struct RenderContext {
+    pub scene_transforms: SceneTransforms,
+}
 
 impl Renderer {
     fn new(backend: Box<dyn RenderBackend>) -> Self {
         Self { backend }
     }
 
-    fn render(&mut self, view: &View, post_effects: &impl Iterator<Item = PostEffect>) -> Texture {}
+    fn render(
+        &mut self,
+        context: &RenderContext,
+        scene: &Scene,
+        post_effects: &impl Iterator<Item = PostEffect>,
+    ) { // TODO: return Texture
+    }
     fn present(
         &mut self,
         images: &impl Iterator<Item = Texture>,

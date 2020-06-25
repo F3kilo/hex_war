@@ -1,7 +1,10 @@
 use crate::graphics::{LoadError, NotFoundError};
 use crate::math::screen_coords::ScreenCoords;
+use std::borrow::BorrowMut;
+use std::cell::{Ref, RefCell, RefMut};
 use std::cmp::Ordering;
 use std::hash::Hash;
+use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::{fmt, hash};
@@ -18,7 +21,7 @@ pub trait TextureManager {
     fn ids(&self) -> &dyn Iterator<Item = TextureId>;
 }
 
-pub type SharedManager = Rc<dyn TextureManager>;
+pub type SharedManager = Rc<RefCell<dyn TextureManager>>;
 
 pub struct UniqueTexture {
     id: TextureId,
@@ -26,27 +29,38 @@ pub struct UniqueTexture {
 }
 
 impl UniqueTexture {
-    pub fn new(path: PathBuf, mut manager: SharedManager) -> Result<Self, LoadError> {
-        let id = manager.create_texture(path)?;
+    pub fn new(path: PathBuf, manager: SharedManager) -> Result<Self, LoadError> {
+        let id = Self::get_mut_manager(&manager).create_texture(path)?;
         Ok(Self { id, manager })
     }
 
     pub fn get_size(&self) -> ScreenCoords {
-        self.manager.get_size(self.id).unwrap()
+        Self::get_manager(&self.manager).get_size(self.id).unwrap()
     }
 
-    pub fn get_path(&self) -> &Path {
-        self.manager.get_path(self.id).unwrap()
+    pub fn get_path(&self) -> PathBuf {
+        Self::get_manager(&self.manager)
+            .get_path(self.id)
+            .unwrap()
+            .to_path_buf()
     }
 
     pub fn get_id(&self) -> TextureId {
         self.id
     }
+
+    fn get_manager(manager: &SharedManager) -> Ref<dyn TextureManager> {
+        RefCell::try_borrow(&manager).expect("Can't get reference to texture manager.")
+    }
+
+    fn get_mut_manager(manager: &SharedManager) -> RefMut<dyn TextureManager> {
+        RefCell::try_borrow_mut(&manager).expect("Can't get mutable reference to texture manager.")
+    }
 }
 
 impl Drop for UniqueTexture {
     fn drop(&mut self) {
-        self.manager.drop_texture(self.id);
+        Self::get_mut_manager(&self.manager).drop_texture(self.id);
     }
 }
 

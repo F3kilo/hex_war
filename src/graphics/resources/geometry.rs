@@ -1,5 +1,5 @@
 use crate::graphics::{LoadError, NotFoundError};
-use std::cell::RefCell;
+use std::cell::{Ref, RefCell, RefMut};
 use std::cmp::Ordering;
 use std::hash::Hash;
 use std::path::{Path, PathBuf};
@@ -26,22 +26,33 @@ pub struct UniqueGeometry {
 
 impl UniqueGeometry {
     pub fn new(path: PathBuf, manager: SharedManager) -> Result<Self, LoadError> {
-        let id = manager.borrow_mut().create_geometry(path)?;
+        let id = Self::get_mut_manager(&manager).create_geometry(path)?;
         Ok(Self { id, manager })
     }
 
     pub fn get_path(&self) -> PathBuf {
-        self.manager.borrow().get_path(self.id).unwrap().into()
+        Self::get_manager(&self.manager)
+            .get_path(self.id)
+            .unwrap()
+            .into()
     }
 
     pub fn get_id(&self) -> GeometryId {
         self.id
     }
+
+    fn get_manager(manager: &SharedManager) -> Ref<dyn GeometryManager> {
+        RefCell::try_borrow(&manager).expect("Can't get reference to geometry manager.")
+    }
+
+    fn get_mut_manager(manager: &SharedManager) -> RefMut<dyn GeometryManager> {
+        RefCell::try_borrow_mut(&manager).expect("Can't get mutable reference to geometry manager.")
+    }
 }
 
 impl Drop for UniqueGeometry {
     fn drop(&mut self) {
-        self.manager.borrow_mut().drop_geometry(self.id);
+        Self::get_mut_manager(&self.manager).drop_geometry(self.id);
     }
 }
 

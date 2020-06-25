@@ -1,31 +1,28 @@
 use crate::graphics::resources::geometry::Geometry;
-use crate::graphics::resources::material::Material;
-use crate::graphics::resources::view::View;
+use crate::graphics::resources::texture::Texture;
 use crate::graphics::Renderer;
 use crate::hex_war_app::cursor::{CursorRenderer, State};
 use crate::math::screen_coords::ScreenCoords;
 use glam::Mat4;
 
 pub struct Materials {
-    pressed: Material,
-    released: Material,
+    pressed: Texture,
+    released: Texture,
 }
 
 pub struct SpriteCursor {
     materials: Materials,
-    current_material: Material,
-    view: View,
+    current_material: Texture,
     geometry: Geometry,
     size: ScreenCoords,
 }
 
 impl SpriteCursor {
-    pub fn new(materials: Materials, view: View, geometry: Geometry, size: ScreenCoords) -> Self {
+    pub fn new(materials: Materials, geometry: Geometry, size: ScreenCoords) -> Self {
         let current_material = materials.released.clone();
         Self {
             materials,
             current_material,
-            view,
             geometry,
             size,
         }

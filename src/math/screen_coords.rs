@@ -9,10 +9,6 @@ pub type Int = i64;
 #[derive(Debug, Default, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct ScreenCoords(Int, Int);
 
-pub fn ivec2(x: Int, y: Int) -> ScreenCoords {
-    ScreenCoords(x, y)
-}
-
 impl ScreenCoords {
     /// Returns a new `Vec4` with elements representing the sign of `self`.
     ///
