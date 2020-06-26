@@ -89,15 +89,12 @@ impl Renderer {
     }
 }
 
-type Depth = f32;
+pub type Depth = f32;
 
 pub trait Camera {
     fn to_world(&self, point: ScreenCoords, depth: Depth, screen_size: ScreenCoords)
         -> WorldCoords;
-    fn to_screen(&self, world: WorldCoords) -> (ScreenCoords, Depth);
-
-    fn size_to_world(&self, screen: ScreenCoords, depth: Depth) -> WorldCoords;
-    fn size_to_screen(&self, world: WorldCoords) -> (ScreenCoords, Depth);
+    fn to_screen(&self, world: WorldCoords, screen_size: ScreenCoords) -> (ScreenCoords, Depth);
 
     fn get_view_transform(&self) -> Mat4;
     fn get_proj_transform(&self) -> Mat4;

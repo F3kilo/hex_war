@@ -1,6 +1,6 @@
 pub mod cursor;
 pub mod main_menu;
-mod planar_camera;
+mod ortho_camera;
 pub mod rendering;
 pub mod state;
 pub mod update_timer;
@@ -8,13 +8,16 @@ pub mod update_timer;
 use crate::app::{App, ELWT};
 use crate::graphics::backend::vulkan::VulkanRenderer;
 use crate::graphics::resources::scene::Scene;
-use crate::graphics::Renderer;
+use crate::graphics::{Camera, RenderContext, Renderer, SceneTransforms};
+use crate::hex_war_app::ortho_camera::OrthographicCamera;
 use crate::hex_war_app::rendering::log_renderers::CursorLogRenderer;
 use crate::hex_war_app::update_timer::UpdateTimer;
 use crate::math::screen_coords::ScreenCoords;
+use crate::math::world_coords::WorldCoords;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
+use std::iter;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
@@ -27,6 +30,11 @@ struct Scenes {
     game: Scene,
 }
 
+#[derive(Debug, Clone)]
+struct Cameras {
+    pub ui: OrthographicCamera,
+}
+
 pub struct HexWarApp {
     window: Window,
     logger: Logger,
@@ -35,6 +43,7 @@ pub struct HexWarApp {
     update_timer: UpdateTimer,
     renderer: Renderer,
     scenes: Scenes,
+    cameras: Cameras,
 }
 
 impl HexWarApp {
@@ -47,6 +56,11 @@ impl HexWarApp {
             ui: renderer.create_scene(),
             game: renderer.create_scene(),
         };
+
+        let cameras = Cameras {
+            ui: OrthographicCamera::new(WorldCoords::zero(), WorldCoords::zero()), // TODO: Think about coordinates
+        };
+
         trace!(logger, "HexWarApp initialized");
         Self {
             window,
@@ -56,6 +70,7 @@ impl HexWarApp {
             update_timer,
             renderer,
             scenes,
+            cameras,
         }
     }
 
@@ -113,8 +128,29 @@ impl HexWarApp {
 
     pub fn draw(&mut self) {
         trace!(self.logger, "HexWarApp draw.");
+        self.render_ui()
+    }
+
+    fn render_ui(&mut self) {
+        let width = self.window.inner_size().width as i64;
+        let height = self.window.inner_size().height as i64;
+        let screen_size = (width, height).into();
+
         self.cursor
-            .add_to_scene(&mut self.scenes.ui, self.cameras.ui);
+            .add_to_scene(&mut self.scenes.ui, &self.cameras.ui, screen_size);
+
+        let ui_scene_transforms = SceneTransforms {
+            world: Default::default(),
+            view: self.cameras.ui.get_proj_transform(),
+            proj: Default::default(),
+        };
+
+        let ui_context = RenderContext {
+            scene_transforms: ui_scene_transforms,
+        };
+
+        self.renderer
+            .render(&ui_context, &self.scenes.ui, &iter::empty())
     }
 }
 

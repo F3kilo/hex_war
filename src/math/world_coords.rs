@@ -16,6 +16,22 @@ impl WorldCoords {
     pub fn get_inner(&self) -> Vec3 {
         self.0
     }
+
+    pub fn x(&self) -> f32 {
+        self.0.x()
+    }
+
+    pub fn y(&self) -> f32 {
+        self.0.y()
+    }
+
+    pub fn z(&self) -> f32 {
+        self.0.z()
+    }
+
+    pub fn abs_diff_eq(self, other: Self, max_abs_diff: f32) -> bool {
+        self.0.abs_diff_eq(other.0, max_abs_diff)
+    }
 }
 
 impl From<(f32, f32, f32)> for WorldCoords {

@@ -1,6 +1,6 @@
 use crate::graphics::resources::geometry::Geometry;
 use crate::graphics::resources::texture::Texture;
-use crate::graphics::{LoadError, NotFoundError};
+use crate::graphics::NotFoundError;
 use glam::{Mat4, Vec2};
 use palette::Srgba;
 use std::cell::{Ref, RefCell, RefMut};

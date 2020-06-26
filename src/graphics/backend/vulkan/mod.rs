@@ -117,12 +117,12 @@ impl VulkanRenderer {
 impl RenderBackend for VulkanRenderer {
     fn create_texture(&self, path: PathBuf) -> Result<Texture, LoadError> {
         let unique_tex = UniqueTexture::new(path, self.textures.clone());
-        unique_tex.map(|unique| Rc::new(unique))
+        unique_tex.map(Rc::new)
     }
 
     fn create_geometry(&self, path: PathBuf) -> Result<Geometry, LoadError> {
         let unique_geom = UniqueGeometry::new(path, self.geometries.clone());
-        unique_geom.map(|unique| Rc::new(unique))
+        unique_geom.map(Rc::new)
     }
 
     fn create_scene(&self) -> Scene {

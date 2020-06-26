@@ -10,7 +10,13 @@ pub enum State {
 
 pub trait CursorRepresentation {
     fn set_state(&mut self, state: State);
-    fn add_to_scene(&self, position: ScreenCoords, scene: &mut Scene, camera: &impl Camera);
+    fn add_to_scene(
+        &self,
+        position: ScreenCoords,
+        screen_size: ScreenCoords,
+        scene: &mut Scene,
+        camera: &impl Camera,
+    );
 }
 
 #[derive(Debug)]
@@ -36,7 +42,8 @@ impl<Renderer: CursorRepresentation> Cursor<Renderer> {
         self.renderer.set_state(state)
     }
 
-    pub fn add_to_scene(&self, scene: &mut Scene, camera: &impl Camera) {
-        self.renderer.add_to_scene(self.pos, scene, camera)
+    pub fn add_to_scene(&self, scene: &mut Scene, camera: &impl Camera, screen_size: ScreenCoords) {
+        self.renderer
+            .add_to_scene(self.pos, screen_size, scene, camera)
     }
 }

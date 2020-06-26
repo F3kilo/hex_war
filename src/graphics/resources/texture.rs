@@ -1,10 +1,8 @@
 use crate::graphics::{LoadError, NotFoundError};
 use crate::math::screen_coords::ScreenCoords;
-use std::borrow::BorrowMut;
 use std::cell::{Ref, RefCell, RefMut};
 use std::cmp::Ordering;
 use std::hash::Hash;
-use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::{fmt, hash};

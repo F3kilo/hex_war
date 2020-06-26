@@ -4,6 +4,7 @@ use crate::graphics::resources::texture::Texture;
 use crate::graphics::Camera;
 use crate::hex_war_app::cursor::{CursorRepresentation, State};
 use crate::math::screen_coords::ScreenCoords;
+use crate::math::world_coords::WorldCoords;
 use glam::{Mat4, Quat};
 use palette::Srgba;
 
@@ -30,20 +31,36 @@ impl SpriteCursor {
         }
     }
 
-    fn get_transforms(&self, camera: &impl Camera, position: ScreenCoords) -> Mat4 {
+    fn get_transforms(
+        &self,
+        camera: &impl Camera,
+        position: ScreenCoords,
+        screen_size: ScreenCoords,
+    ) -> Mat4 {
         let depth = 0f32;
-        let scale = camera.size_to_world(self.size, depth).get_inner();
+        let scale = self.calc_scale(screen_size, camera);
         let rotation = Quat::default();
-        let translation = camera.to_world(position, depth).get_inner();
-        Mat4::from_scale_rotation_translation(scale, rotation, translation)
+        let translation = camera.to_world(position, depth, screen_size).get_inner();
+        Mat4::from_scale_rotation_translation(scale.get_inner(), rotation, translation)
     }
 
-    pub fn get_instance_data(&self, camera: &impl Camera, position: ScreenCoords) -> Instance {
+    pub fn get_instance_data(
+        &self,
+        camera: &impl Camera,
+        position: ScreenCoords,
+        screen_size: ScreenCoords,
+    ) -> Instance {
         Instance {
-            transforms: self.get_transforms(camera, position),
+            transforms: self.get_transforms(camera, position, screen_size),
             uv_transforms: UvTransforms::default(),
             color: Srgba::new(1.0, 1.0, 1.0, 1.0),
         }
+    }
+
+    fn calc_scale(&self, screen_size: ScreenCoords, camera: &impl Camera) -> WorldCoords {
+        let origin = camera.to_world(ScreenCoords::zero(), 0.0, screen_size);
+        let point = camera.to_world(screen_size, 0.0, screen_size);
+        point - origin
     }
 }
 
@@ -55,11 +72,17 @@ impl CursorRepresentation for SpriteCursor {
         };
     }
 
-    fn add_to_scene(&self, position: ScreenCoords, scene: &mut Scene, camera: &impl Camera) {
+    fn add_to_scene(
+        &self,
+        position: ScreenCoords,
+        screen_size: ScreenCoords,
+        scene: &mut Scene,
+        camera: &impl Camera,
+    ) {
         let tex_geom = TexturedGeometry {
             geometry: self.geometry.clone(),
             texture: self.current_texture.clone(),
-            instance: self.get_instance_data(camera, position),
+            instance: self.get_instance_data(camera, position, screen_size),
         };
         scene.add_textured_geometry(tex_geom)
     }
