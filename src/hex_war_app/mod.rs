@@ -53,8 +53,8 @@ impl HexWarApp {
 
         let renderer = Renderer::new(Box::new(VulkanRenderer::new()));
         let scenes = Scenes {
-            ui: renderer.create_scene(),
-            game: renderer.create_scene(),
+            ui: Scene::new(),
+            game: Scene::new(),
         };
 
         let cameras = Cameras {

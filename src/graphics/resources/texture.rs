@@ -1,64 +1,34 @@
-use crate::graphics::{LoadError, NotFoundError};
-use crate::math::screen_coords::ScreenCoords;
-use std::cell::{Ref, RefCell, RefMut};
+use crate::graphics::manager::texture_manager::{CommonTextureManager, TextureId, TextureManager};
+use crate::graphics::LoadError;
 use std::cmp::Ordering;
 use std::hash::Hash;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::rc::Rc;
 use std::{fmt, hash};
 
-#[derive(Debug, Eq, PartialEq, Hash, Copy, Clone, Ord, PartialOrd)]
-pub struct TextureId(u64);
-
-pub trait TextureManager {
-    fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError>;
-    fn drop_texture(&mut self, id: TextureId) -> bool;
-    fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError>;
-    fn get_path(&self, id: TextureId) -> Result<&Path, NotFoundError>;
-
-    fn ids(&self) -> &dyn Iterator<Item = TextureId>;
-}
-
-pub type SharedManager = Rc<RefCell<dyn TextureManager>>;
-
 pub struct UniqueTexture {
     id: TextureId,
-    manager: SharedManager,
+    manager: CommonTextureManager,
 }
 
 impl UniqueTexture {
-    pub fn new(path: PathBuf, manager: SharedManager) -> Result<Self, LoadError> {
-        let id = Self::get_mut_manager(&manager).create_texture(path)?;
+    pub fn new(path: PathBuf, mut manager: CommonTextureManager) -> Result<Self, LoadError> {
+        let id = manager.create_texture(path)?;
         Ok(Self { id, manager })
     }
 
-    pub fn get_size(&self) -> ScreenCoords {
-        Self::get_manager(&self.manager).get_size(self.id).unwrap()
-    }
-
     pub fn get_path(&self) -> PathBuf {
-        Self::get_manager(&self.manager)
-            .get_path(self.id)
-            .unwrap()
-            .to_path_buf()
+        self.manager.get_path(self.id).unwrap()
     }
 
     pub fn get_id(&self) -> TextureId {
         self.id
     }
-
-    fn get_manager(manager: &SharedManager) -> Ref<dyn TextureManager> {
-        RefCell::try_borrow(&manager).expect("Can't get reference to texture manager.")
-    }
-
-    fn get_mut_manager(manager: &SharedManager) -> RefMut<dyn TextureManager> {
-        RefCell::try_borrow_mut(&manager).expect("Can't get mutable reference to texture manager.")
-    }
 }
 
 impl Drop for UniqueTexture {
     fn drop(&mut self) {
-        Self::get_mut_manager(&self.manager).drop_texture(self.id);
+        self.manager.drop_texture(self.id);
     }
 }
 
@@ -66,7 +36,7 @@ impl fmt::Debug for UniqueTexture {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Texture: id = {:?}; path = '{:?}'",
+            "Geometry: id = {:?}; path = '{:?}'",
             self.id,
             self.get_path()
         )

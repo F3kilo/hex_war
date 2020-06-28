@@ -1,11 +1,9 @@
 pub mod vulkan;
 
-use crate::graphics::resources::{geometry, scene, texture};
-use crate::graphics::LoadError;
-use std::path::PathBuf;
+use crate::graphics::manager::geometry_manager::SharedGeometryManager;
+use crate::graphics::manager::texture_manager::SharedTextureManager;
 
 pub trait RenderBackend {
-    fn create_texture(&self, path: PathBuf) -> Result<texture::Texture, LoadError>;
-    fn create_geometry(&self, path: PathBuf) -> Result<geometry::Geometry, LoadError>;
-    fn create_scene(&self) -> scene::Scene;
+    fn get_geometry_manager(&self) -> SharedGeometryManager;
+    fn get_texture_manager(&self) -> SharedTextureManager;
 }

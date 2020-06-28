@@ -1,7 +1,9 @@
 use crate::graphics::backend::RenderBackend;
+use crate::graphics::manager::geometry_manager::CommonGeometryManager;
+use crate::graphics::manager::texture_manager::CommonTextureManager;
+use crate::graphics::resources::geometry::{Geometry, UniqueGeometry};
 use crate::graphics::resources::scene::Scene;
-use crate::graphics::resources::texture::Texture;
-use crate::graphics::resources::{geometry, scene, texture};
+use crate::graphics::resources::texture::{Texture, UniqueTexture};
 use crate::math::screen_coords::ScreenCoords;
 use crate::math::world_coords::WorldCoords;
 use glam::Mat4;
@@ -10,6 +12,7 @@ use std::fmt;
 use std::path::PathBuf;
 
 pub mod backend;
+pub mod manager;
 pub mod primitive;
 pub mod resources;
 
@@ -63,14 +66,13 @@ impl Renderer {
         Self { backend }
     }
 
-    pub fn create_texture(&self, path: PathBuf) -> Result<texture::Texture, LoadError> {
-        self.backend.create_texture(path)
+    pub fn create_texture(&self, path: PathBuf) -> Result<Texture, LoadError> {
+        let common_manager = CommonTextureManager::new(self.backend.get_texture_manager());
+        Ok(UniqueTexture::new(path, common_manager)?.into())
     }
-    pub fn create_geometry(&self, path: PathBuf) -> Result<geometry::Geometry, LoadError> {
-        self.backend.create_geometry(path)
-    }
-    pub fn create_scene(&self) -> scene::Scene {
-        self.backend.create_scene()
+    pub fn create_geometry(&self, path: PathBuf) -> Result<Geometry, LoadError> {
+        let common_manager = CommonGeometryManager::new(self.backend.get_geometry_manager());
+        Ok(UniqueGeometry::new(path, common_manager)?.into())
     }
 
     pub fn render(

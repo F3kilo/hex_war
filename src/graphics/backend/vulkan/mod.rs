@@ -1,13 +1,15 @@
 use crate::graphics::backend::RenderBackend;
-use crate::graphics::resources::geometry::{Geometry, GeometryId, GeometryManager, UniqueGeometry};
-use crate::graphics::resources::scene::{Scene, SceneId, SceneManager, TexturedGeometry};
-use crate::graphics::resources::texture::{Texture, TextureId, TextureManager, UniqueTexture};
+use crate::graphics::manager::geometry_manager::{
+    GeometryId, GeometryManager, SharedGeometryManager,
+};
+use crate::graphics::manager::texture_manager::{SharedTextureManager, TextureId, TextureManager};
 use crate::graphics::{LoadError, NotFoundError};
 use crate::math::screen_coords::ScreenCoords;
 use std::cell::RefCell;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::rc::Rc;
 
+#[derive(Debug)]
 struct VkTextureManager {}
 
 impl VkTextureManager {
@@ -25,19 +27,20 @@ impl TextureManager for VkTextureManager {
         unimplemented!()
     }
 
+    fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError> {
+        unimplemented!()
+    }
+
     fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError> {
         unimplemented!()
     }
 
-    fn get_path(&self, id: TextureId) -> Result<&Path, NotFoundError> {
-        unimplemented!()
-    }
-
-    fn ids(&self) -> &dyn Iterator<Item = TextureId> {
+    fn ids(&self) -> Vec<TextureId> {
         unimplemented!()
     }
 }
 
+#[derive(Debug)]
 struct VkGeometryManager {}
 
 impl VkGeometryManager {
@@ -55,41 +58,11 @@ impl GeometryManager for VkGeometryManager {
         unimplemented!()
     }
 
-    fn get_path(&self, id: GeometryId) -> Result<&Path, NotFoundError> {
+    fn get_path(&self, id: GeometryId) -> Result<PathBuf, NotFoundError> {
         unimplemented!()
     }
 
-    fn ids(&self) -> &dyn Iterator<Item = GeometryId> {
-        unimplemented!()
-    }
-}
-
-struct VkSceneManager {}
-
-impl VkSceneManager {
-    pub fn new() -> Self {
-        Self {}
-    }
-}
-
-impl SceneManager for VkSceneManager {
-    fn create_scene(&mut self) -> SceneId {
-        unimplemented!()
-    }
-
-    fn drop_scene(&mut self, id: SceneId) -> bool {
-        unimplemented!()
-    }
-
-    fn add_textured_geometry(
-        &mut self,
-        id: SceneId,
-        inst: TexturedGeometry,
-    ) -> Result<(), NotFoundError> {
-        unimplemented!()
-    }
-
-    fn ids(&self) -> &dyn Iterator<Item = SceneId> {
+    fn ids(&self) -> Vec<GeometryId> {
         unimplemented!()
     }
 }
@@ -97,35 +70,26 @@ impl SceneManager for VkSceneManager {
 pub struct VulkanRenderer {
     textures: Rc<RefCell<VkTextureManager>>,
     geometries: Rc<RefCell<VkGeometryManager>>,
-    scenes: Rc<RefCell<VkSceneManager>>,
 }
 
 impl VulkanRenderer {
     pub fn new() -> Self {
         let textures = Rc::new(RefCell::new(VkTextureManager::new()));
         let geometries = Rc::new(RefCell::new(VkGeometryManager::new()));
-        let scenes = Rc::new(RefCell::new(VkSceneManager::new()));
 
         Self {
             textures,
             geometries,
-            scenes,
         }
     }
 }
 
 impl RenderBackend for VulkanRenderer {
-    fn create_texture(&self, path: PathBuf) -> Result<Texture, LoadError> {
-        let unique_tex = UniqueTexture::new(path, self.textures.clone());
-        unique_tex.map(Rc::new)
+    fn get_geometry_manager(&self) -> SharedGeometryManager {
+        self.geometries.clone()
     }
 
-    fn create_geometry(&self, path: PathBuf) -> Result<Geometry, LoadError> {
-        let unique_geom = UniqueGeometry::new(path, self.geometries.clone());
-        unique_geom.map(Rc::new)
-    }
-
-    fn create_scene(&self) -> Scene {
-        Scene::new(self.scenes.clone())
+    fn get_texture_manager(&self) -> SharedTextureManager {
+        self.textures.clone()
     }
 }
