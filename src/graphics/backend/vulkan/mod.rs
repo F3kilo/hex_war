@@ -4,9 +4,9 @@ mod texture_manager;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::renderer::VkRenderer;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
+use crate::graphics::low_level::{Graphics, PresentInfo, Render};
 use crate::graphics::manager::geometry_manager::GeometryManager;
 use crate::graphics::manager::texture_manager::TextureManager;
-use crate::graphics::{Graphics, PresentInfo, Render};
 
 struct VkGraphics {
     texture_manager: VkTextureManager,

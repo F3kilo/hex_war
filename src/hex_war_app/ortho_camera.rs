@@ -1,4 +1,4 @@
-use crate::graphics::{Camera, Depth};
+use crate::graphics::camera::{Camera, Depth};
 use crate::math::screen_coords::{Int, ScreenCoords};
 use crate::math::world_coords::WorldCoords;
 use glam::{Mat4, Vec4};
@@ -65,7 +65,7 @@ impl Camera for OrthographicCamera {
 
 #[cfg(test)]
 mod tests {
-    use crate::graphics::Camera;
+    use crate::graphics::camera::Camera;
     use crate::hex_war_app::ortho_camera::OrthographicCamera;
 
     #[test]

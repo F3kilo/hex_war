@@ -6,7 +6,6 @@ pub mod state;
 pub mod update_timer;
 
 use crate::app::{App, ELWT};
-use crate::graphics::{Camera, RenderContext, SceneTransforms};
 use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
 use crate::hex_war_app::update_timer::UpdateTimer;
@@ -15,7 +14,6 @@ use crate::math::world_coords::WorldCoords;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
-use std::iter;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
