@@ -1,4 +1,3 @@
-use crate::graphics::resources::scene::Scene;
 use crate::graphics::Camera;
 use crate::math::screen_coords::ScreenCoords;
 
@@ -10,24 +9,17 @@ pub enum State {
 
 pub trait CursorRepresentation {
     fn set_state(&mut self, state: State);
-    fn add_to_scene(
-        &self,
-        position: ScreenCoords,
-        screen_size: ScreenCoords,
-        scene: &mut Scene,
-        camera: &impl Camera,
-    );
+    fn add_to_scene(&self, position: ScreenCoords, screen_size: ScreenCoords, camera: &impl Camera);
 }
 
 #[derive(Debug)]
-pub struct Cursor<Renderer> {
+pub struct Cursor {
     pos: ScreenCoords,
-    renderer: Renderer,
 }
 
-impl<Renderer: CursorRepresentation> Cursor<Renderer> {
-    pub fn new(pos: ScreenCoords, renderer: Renderer) -> Self {
-        Self { pos, renderer }
+impl Cursor {
+    pub fn new(pos: ScreenCoords) -> Self {
+        Self { pos }
     }
 
     pub fn get_pos(&self) -> ScreenCoords {
@@ -38,12 +30,5 @@ impl<Renderer: CursorRepresentation> Cursor<Renderer> {
         self.pos = pos
     }
 
-    pub fn change_state(&mut self, state: State) {
-        self.renderer.set_state(state)
-    }
-
-    pub fn add_to_scene(&self, scene: &mut Scene, camera: &impl Camera, screen_size: ScreenCoords) {
-        self.renderer
-            .add_to_scene(self.pos, screen_size, scene, camera)
-    }
+    pub fn change_state(&mut self, state: State) {}
 }

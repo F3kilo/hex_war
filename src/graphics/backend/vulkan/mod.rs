@@ -1,95 +1,45 @@
-use crate::graphics::backend::RenderBackend;
-use crate::graphics::manager::geometry_manager::{
-    GeometryId, GeometryManager, SharedGeometryManager,
-};
-use crate::graphics::manager::texture_manager::{SharedTextureManager, TextureId, TextureManager};
-use crate::graphics::{LoadError, NotFoundError};
-use crate::math::screen_coords::ScreenCoords;
-use std::cell::RefCell;
-use std::path::PathBuf;
-use std::rc::Rc;
+mod geometry_manager;
+mod renderer;
+mod texture_manager;
+use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
+use crate::graphics::backend::vulkan::renderer::VkRenderer;
+use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
+use crate::graphics::manager::geometry_manager::GeometryManager;
+use crate::graphics::manager::texture_manager::TextureManager;
+use crate::graphics::{Graphics, PresentInfo, Render};
 
-#[derive(Debug)]
-struct VkTextureManager {}
-
-impl VkTextureManager {
-    pub fn new() -> Self {
-        Self {}
-    }
+struct VkGraphics {
+    texture_manager: VkTextureManager,
+    geometry_manager: VkGeometryManager,
+    renderer: VkRenderer,
 }
 
-impl TextureManager for VkTextureManager {
-    fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError> {
+impl Graphics for VkGraphics {
+    fn get_mut_texture_manager(&mut self) -> &mut dyn TextureManager {
+        &mut self.texture_manager
+    }
+
+    fn get_texture_manager(&self) -> &dyn TextureManager {
+        &self.texture_manager
+    }
+
+    fn get_mut_geometry_manager(&mut self) -> &mut dyn GeometryManager {
+        &mut self.geometry_manager
+    }
+
+    fn get_geometry_manager(&self) -> &dyn GeometryManager {
+        &self.geometry_manager
+    }
+
+    fn get_mut_renderer(&mut self) -> &mut dyn Render {
+        &mut self.renderer
+    }
+
+    fn get_renderer(&self) -> &dyn Render {
+        &self.renderer
+    }
+
+    fn present(&mut self, info: PresentInfo) {
         unimplemented!()
-    }
-
-    fn drop_texture(&mut self, id: TextureId) -> bool {
-        unimplemented!()
-    }
-
-    fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError> {
-        unimplemented!()
-    }
-
-    fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError> {
-        unimplemented!()
-    }
-
-    fn ids(&self) -> Vec<TextureId> {
-        unimplemented!()
-    }
-}
-
-#[derive(Debug)]
-struct VkGeometryManager {}
-
-impl VkGeometryManager {
-    pub fn new() -> Self {
-        Self {}
-    }
-}
-
-impl GeometryManager for VkGeometryManager {
-    fn create_geometry(&mut self, path: PathBuf) -> Result<GeometryId, LoadError> {
-        unimplemented!()
-    }
-
-    fn drop_geometry(&mut self, id: GeometryId) -> bool {
-        unimplemented!()
-    }
-
-    fn get_path(&self, id: GeometryId) -> Result<PathBuf, NotFoundError> {
-        unimplemented!()
-    }
-
-    fn ids(&self) -> Vec<GeometryId> {
-        unimplemented!()
-    }
-}
-
-pub struct VulkanRenderer {
-    textures: Rc<RefCell<VkTextureManager>>,
-    geometries: Rc<RefCell<VkGeometryManager>>,
-}
-
-impl VulkanRenderer {
-    pub fn new() -> Self {
-        let textures = Rc::new(RefCell::new(VkTextureManager::new()));
-        let geometries = Rc::new(RefCell::new(VkGeometryManager::new()));
-
-        Self {
-            textures,
-            geometries,
-        }
-    }
-}
-
-impl RenderBackend for VulkanRenderer {
-    fn get_geometry_manager(&self) -> SharedGeometryManager {
-        self.geometries.clone()
-    }
-
-    fn get_texture_manager(&self) -> SharedTextureManager {
-        self.textures.clone()
     }
 }

@@ -6,11 +6,9 @@ pub mod state;
 pub mod update_timer;
 
 use crate::app::{App, ELWT};
-use crate::graphics::backend::vulkan::VulkanRenderer;
-use crate::graphics::resources::scene::Scene;
-use crate::graphics::{Camera, RenderContext, Renderer, SceneTransforms};
+use crate::graphics::{Camera, RenderContext, SceneTransforms};
+use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
-use crate::hex_war_app::rendering::log_renderers::CursorLogRenderer;
 use crate::hex_war_app::update_timer::UpdateTimer;
 use crate::math::screen_coords::ScreenCoords;
 use crate::math::world_coords::WorldCoords;
@@ -21,14 +19,6 @@ use std::iter;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
-
-pub type Cursor = cursor::Cursor<CursorLogRenderer>;
-
-#[derive(Debug)]
-struct Scenes {
-    ui: Scene,
-    game: Scene,
-}
 
 #[derive(Debug, Clone)]
 struct Cameras {
@@ -41,8 +31,6 @@ pub struct HexWarApp {
     state: State,
     cursor: Cursor,
     update_timer: UpdateTimer,
-    renderer: Renderer,
-    scenes: Scenes,
     cameras: Cameras,
 }
 
@@ -50,12 +38,6 @@ impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
         let cursor = HexWarApp::create_cursor(&logger);
         let update_timer = UpdateTimer::new(60);
-
-        let renderer = Renderer::new(Box::new(VulkanRenderer::new()));
-        let scenes = Scenes {
-            ui: Scene::new(),
-            game: Scene::new(),
-        };
 
         let cameras = Cameras {
             ui: OrthographicCamera::new(WorldCoords::zero(), WorldCoords::zero()), // TODO: Think about coordinates
@@ -68,17 +50,13 @@ impl HexWarApp {
             state: State::Menu(MainMenu::new(logger)),
             cursor,
             update_timer,
-            renderer,
-            scenes,
+
             cameras,
         }
     }
 
     fn create_cursor(logger: &Logger) -> Cursor {
-        Cursor::new(
-            ScreenCoords::zero(),
-            CursorLogRenderer::new(logger.clone(), cursor::State::Released),
-        )
+        Cursor::new(ScreenCoords::zero())
     }
 
     pub fn close_requested(&mut self) {
@@ -131,27 +109,7 @@ impl HexWarApp {
         self.render_ui()
     }
 
-    fn render_ui(&mut self) {
-        let width = self.window.inner_size().width as i64;
-        let height = self.window.inner_size().height as i64;
-        let screen_size = (width, height).into();
-
-        self.cursor
-            .add_to_scene(&mut self.scenes.ui, &self.cameras.ui, screen_size);
-
-        let ui_scene_transforms = SceneTransforms {
-            world: Default::default(),
-            view: self.cameras.ui.get_proj_transform(),
-            proj: Default::default(),
-        };
-
-        let ui_context = RenderContext {
-            scene_transforms: ui_scene_transforms,
-        };
-
-        self.renderer
-            .render(&ui_context, &self.scenes.ui, &iter::empty())
-    }
+    fn render_ui(&mut self) {}
 }
 
 impl App for HexWarApp {
