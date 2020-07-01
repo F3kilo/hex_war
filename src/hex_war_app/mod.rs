@@ -27,12 +27,10 @@ struct Cameras {
     pub ui: OrthographicCamera,
 }
 
-type Scene = graphics::scene::Scene<SharedGraphics, SharedGraphics, SharedGraphics>;
-
-struct Scenes {
-    pub ui: Scene,
-    pub game: Scene,
-}
+// struct Scenes {
+//     pub ui: Scene,
+//     pub game: Scene,
+// }
 
 pub struct HexWarApp {
     window: Window,
@@ -42,7 +40,7 @@ pub struct HexWarApp {
     update_timer: UpdateTimer,
     cameras: Cameras,
     graphics: SharedGraphics,
-    scenes: Scenes,
+    // scenes: Scenes,
 }
 
 impl HexWarApp {
@@ -57,10 +55,10 @@ impl HexWarApp {
         let graphics_backend = VkGraphics::new();
         let graphics = SharedGraphics::new(Box::new(graphics_backend));
 
-        let scenes = Scenes {
-            ui: Scene::new(graphics.clone(), graphics.clone()),
-            game: Scene::new(graphics.clone(), graphics.clone()),
-        };
+        // let scenes = Scenes {
+        //     ui: Scene::new(graphics.clone(), graphics.clone()),
+        //     game: Scene::new(graphics.clone(), graphics.clone()),
+        // };
 
         trace!(logger, "HexWarApp initialized");
         Self {
@@ -71,7 +69,7 @@ impl HexWarApp {
             update_timer,
             cameras,
             graphics,
-            scenes,
+            // scenes,
         }
     }
 

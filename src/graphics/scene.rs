@@ -1,6 +1,7 @@
 use crate::graphics::geometry::Geometry;
 use crate::graphics::low_level::{
-    ProvideGeometryManager, ProvideRenderer, ProvideTextureManager, RenderContext, RenderData,
+    ProvideGeometryManager, ProvideRenderer, ProvideTextureManager, Render, RenderContext,
+    RenderData,
 };
 use crate::graphics::texture::{Texture, UniqueTexture};
 use glam::{Mat4, Vec2};
@@ -39,28 +40,22 @@ where
     pub instance: Instance,
 }
 
-pub struct Scene<G, T, R>
+pub struct Scene<G, T>
 where
     G: ProvideGeometryManager,
     T: ProvideTextureManager,
-    R: ProvideRenderer,
 {
     textured_geometries: Vec<TexturedGeometry<G, T>>,
-    renderer_provider: R,
-    texture_manager_provider: T,
 }
 
-impl<G, T, R> Scene<G, T, R>
+impl<G, T> Scene<G, T>
 where
     G: ProvideGeometryManager,
-    T: ProvideTextureManager + Clone,
-    R: ProvideRenderer,
+    T: ProvideTextureManager,
 {
-    pub fn new(renderer_provider: R, texture_manager_provider: T) -> Self {
+    pub fn new() -> Self {
         Self {
             textured_geometries: Vec::new(),
-            renderer_provider,
-            texture_manager_provider,
         }
     }
 
@@ -68,12 +63,15 @@ where
         self.textured_geometries.push(textured_geometry)
     }
 
-    pub fn render(&mut self) -> UniqueTexture<T> {
+    pub fn render(
+        &mut self,
+        renderer: &mut impl Render,
+        texture_manager_provider: T,
+    ) -> UniqueTexture<T> {
         let render_context = self.get_render_context();
         let render_data = self.get_render_data();
-        let renderer = self.renderer_provider.get_mut_renderer();
         let texture_id = renderer.render(render_context, render_data);
-        UniqueTexture::from_raw(texture_id, self.texture_manager_provider.clone())
+        UniqueTexture::from_raw(texture_id, texture_manager_provider)
     }
 
     pub fn clear(&mut self) {
