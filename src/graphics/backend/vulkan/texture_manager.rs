@@ -6,6 +6,12 @@ use std::path::PathBuf;
 #[derive(Debug)]
 pub struct VkTextureManager {}
 
+impl VkTextureManager {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
 impl TextureManager for VkTextureManager {
     fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError> {
         unimplemented!()

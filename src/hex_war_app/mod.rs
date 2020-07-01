@@ -6,6 +6,10 @@ pub mod state;
 pub mod update_timer;
 
 use crate::app::{App, ELWT};
+use crate::graphics;
+use crate::graphics::backend::vulkan::VkGraphics;
+use crate::graphics::low_level::{ProvideGeometryManager, ProvideRenderer, ProvideTextureManager};
+use crate::graphics::SharedGraphics;
 use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
 use crate::hex_war_app::update_timer::UpdateTimer;
@@ -23,6 +27,13 @@ struct Cameras {
     pub ui: OrthographicCamera,
 }
 
+type Scene = graphics::scene::Scene<SharedGraphics, SharedGraphics, SharedGraphics>;
+
+struct Scenes {
+    pub ui: Scene,
+    pub game: Scene,
+}
+
 pub struct HexWarApp {
     window: Window,
     logger: Logger,
@@ -30,6 +41,8 @@ pub struct HexWarApp {
     cursor: Cursor,
     update_timer: UpdateTimer,
     cameras: Cameras,
+    graphics: SharedGraphics,
+    scenes: Scenes,
 }
 
 impl HexWarApp {
@@ -41,6 +54,14 @@ impl HexWarApp {
             ui: OrthographicCamera::new(WorldCoords::zero(), WorldCoords::zero()), // TODO: Think about coordinates
         };
 
+        let graphics_backend = VkGraphics::new();
+        let graphics = SharedGraphics::new(Box::new(graphics_backend));
+
+        let scenes = Scenes {
+            ui: Scene::new(graphics.clone(), graphics.clone()),
+            game: Scene::new(graphics.clone(), graphics.clone()),
+        };
+
         trace!(logger, "HexWarApp initialized");
         Self {
             window,
@@ -48,8 +69,9 @@ impl HexWarApp {
             state: State::Menu(MainMenu::new(logger)),
             cursor,
             update_timer,
-
             cameras,
+            graphics,
+            scenes,
         }
     }
 

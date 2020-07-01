@@ -11,10 +11,23 @@ use crate::graphics::low_level::{
 use crate::graphics::manager::geometry_manager::GeometryManager;
 use crate::graphics::manager::texture_manager::TextureManager;
 
-struct VkGraphics {
+pub struct VkGraphics {
     texture_manager: VkTextureManager,
     geometry_manager: VkGeometryManager,
     renderer: VkRenderer,
+}
+
+impl VkGraphics {
+    pub fn new() -> Self {
+        let texture_manager = VkTextureManager::new();
+        let geometry_manager = VkGeometryManager::new();
+        let renderer = VkRenderer::new();
+        Self {
+            texture_manager,
+            geometry_manager,
+            renderer,
+        }
+    }
 }
 
 impl ProvideTextureManager for VkGraphics {
