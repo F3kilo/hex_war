@@ -9,5 +9,6 @@ pub trait GeometryManager {
     fn drop_geometry(&mut self, id: GeometryId) -> bool;
     fn get_path(&self, id: GeometryId) -> Result<PathBuf, NotFoundError>;
 
+    fn contains(&self, id: GeometryId) -> bool;
     fn ids(&self) -> Vec<GeometryId>;
 }

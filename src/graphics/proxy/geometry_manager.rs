@@ -32,6 +32,11 @@ impl GeometryManager for GeometryManagerProxy {
         back_ref.get_geometry_manager().get_path(id)
     }
 
+    fn contains(&self, id: GeometryId) -> bool {
+        let back_ref = RefCell::borrow(&self.backend);
+        back_ref.get_geometry_manager().contains(id)
+    }
+
     fn ids(&self) -> Vec<GeometryId> {
         let back_ref = RefCell::borrow(&self.backend);
         back_ref.get_geometry_manager().ids()

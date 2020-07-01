@@ -18,6 +18,10 @@ impl GeometryManager for VkGeometryManager {
         unimplemented!()
     }
 
+    fn contains(&self, id: GeometryId) -> bool {
+        unimplemented!()
+    }
+
     fn ids(&self) -> Vec<GeometryId> {
         unimplemented!()
     }
