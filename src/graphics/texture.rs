@@ -2,14 +2,15 @@ use crate::graphics::error::LoadError;
 use crate::graphics::low_level::ProvideTextureManager;
 use crate::graphics::manager::texture_manager::TextureId;
 use crate::math::screen_coords::ScreenCoords;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
+use std::rc::Rc;
 
-pub struct Texture<M: ProvideTextureManager> {
+pub struct UniqueTexture<M: ProvideTextureManager> {
     id: TextureId,
     manager_provider: M,
 }
 
-impl<M: ProvideTextureManager> Texture<M> {
+impl<M: ProvideTextureManager> UniqueTexture<M> {
     pub fn new(path: PathBuf, mut manager_provider: M) -> Result<Self, LoadError> {
         let id = manager_provider
             .get_mut_texture_manager()
@@ -35,10 +36,12 @@ impl<M: ProvideTextureManager> Texture<M> {
     }
 }
 
-impl<M: ProvideTextureManager> Drop for Texture<M> {
+impl<M: ProvideTextureManager> Drop for UniqueTexture<M> {
     fn drop(&mut self) {
         self.manager_provider
             .get_mut_texture_manager()
             .drop_texture(self.id);
     }
 }
+
+pub type Texture<M: ProvideTextureManager> = Rc<UniqueTexture<M>>;
