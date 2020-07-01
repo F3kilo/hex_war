@@ -1,5 +1,5 @@
+use crate::graphics::error::{LoadError, NotFoundError};
 use crate::graphics::manager::texture_manager::{TextureId, TextureManager};
-use crate::graphics::{LoadError, NotFoundError};
 use crate::math::screen_coords::ScreenCoords;
 use std::path::PathBuf;
 
