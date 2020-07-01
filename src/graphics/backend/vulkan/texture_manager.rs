@@ -23,6 +23,10 @@ impl TextureManager for VkTextureManager {
         unimplemented!()
     }
 
+    fn contains(&self, id: TextureId) -> bool {
+        unimplemented!()
+    }
+
     fn ids(&self) -> Vec<TextureId> {
         unimplemented!()
     }

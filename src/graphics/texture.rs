@@ -2,6 +2,7 @@ use crate::graphics::error::LoadError;
 use crate::graphics::low_level::ProvideTextureManager;
 use crate::graphics::manager::texture_manager::TextureId;
 use crate::math::screen_coords::ScreenCoords;
+use std::fmt;
 use std::path::PathBuf;
 use std::rc::Rc;
 
@@ -19,6 +20,16 @@ impl<M: ProvideTextureManager> UniqueTexture<M> {
             manager_provider,
             id,
         })
+    }
+
+    pub fn from_raw(id: TextureId, manager_provider: M) -> Self {
+        if !manager_provider.get_texture_manager().contains(id) {
+            panic!("Can't create Texture. Manager doesn't contains specified id.")
+        }
+        Self {
+            id,
+            manager_provider,
+        }
     }
 
     pub fn get_path(&self) -> PathBuf {
@@ -44,4 +55,10 @@ impl<M: ProvideTextureManager> Drop for UniqueTexture<M> {
     }
 }
 
-pub type Texture<M: ProvideTextureManager> = Rc<UniqueTexture<M>>;
+impl<M: ProvideTextureManager> fmt::Debug for UniqueTexture<M> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Texture #{:?}", self.id)
+    }
+}
+
+pub type Texture<M> = Rc<UniqueTexture<M>>;

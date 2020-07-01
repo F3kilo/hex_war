@@ -1,10 +1,10 @@
 use crate::graphics::error::LoadError;
 use crate::graphics::low_level::ProvideGeometryManager;
 use crate::graphics::manager::geometry_manager::GeometryId;
+use std::fmt;
 use std::path::PathBuf;
 use std::rc::Rc;
 
-#[derive(Debug)]
 pub struct UniqueGeometry<M: ProvideGeometryManager> {
     id: GeometryId,
     manager_provider: M,
@@ -37,4 +37,10 @@ impl<M: ProvideGeometryManager> Drop for UniqueGeometry<M> {
     }
 }
 
-pub type Geometry<M: ProvideGeometryManager> = Rc<UniqueGeometry<M>>;
+impl<M: ProvideGeometryManager> fmt::Debug for UniqueGeometry<M> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Geometry #{:?}", self.id)
+    }
+}
+
+pub type Geometry<M> = Rc<UniqueGeometry<M>>;

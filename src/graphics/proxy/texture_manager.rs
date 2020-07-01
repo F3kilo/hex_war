@@ -38,6 +38,11 @@ impl TextureManager for TextureManagerProxy {
         back_ref.get_texture_manager().get_size(id)
     }
 
+    fn contains(&self, id: TextureId) -> bool {
+        let back_ref = RefCell::borrow(&self.backend);
+        back_ref.get_texture_manager().contains(id)
+    }
+
     fn ids(&self) -> Vec<TextureId> {
         let back_ref = RefCell::borrow(&self.backend);
         back_ref.get_texture_manager().ids()

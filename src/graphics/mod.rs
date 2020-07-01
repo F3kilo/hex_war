@@ -1,6 +1,7 @@
-pub mod geometry;
 pub mod camera;
 pub mod error;
+pub mod geometry;
+pub mod scene;
 pub mod texture;
 
 use crate::graphics::error::{LoadError, NotFoundError};

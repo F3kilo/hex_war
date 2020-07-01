@@ -11,5 +11,6 @@ pub trait TextureManager {
     fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError>;
     fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError>;
 
+    fn contains(&self, id: TextureId) -> bool;
     fn ids(&self) -> Vec<TextureId>;
 }
