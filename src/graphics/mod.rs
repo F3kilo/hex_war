@@ -1,3 +1,4 @@
+pub mod geometry;
 pub mod camera;
 pub mod error;
 pub mod texture;
