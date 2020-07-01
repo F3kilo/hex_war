@@ -4,7 +4,10 @@ mod texture_manager;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::renderer::VkRenderer;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
-use crate::graphics::low_level::{Graphics, PresentInfo, Render};
+use crate::graphics::low_level::{
+    Graphics, Present, PresentInfo, ProvideGeometryManager, ProvideRenderer, ProvideTextureManager,
+    Render,
+};
 use crate::graphics::manager::geometry_manager::GeometryManager;
 use crate::graphics::manager::texture_manager::TextureManager;
 
@@ -14,7 +17,7 @@ struct VkGraphics {
     renderer: VkRenderer,
 }
 
-impl Graphics for VkGraphics {
+impl ProvideTextureManager for VkGraphics {
     fn get_mut_texture_manager(&mut self) -> &mut dyn TextureManager {
         &mut self.texture_manager
     }
@@ -22,7 +25,9 @@ impl Graphics for VkGraphics {
     fn get_texture_manager(&self) -> &dyn TextureManager {
         &self.texture_manager
     }
+}
 
+impl ProvideGeometryManager for VkGraphics {
     fn get_mut_geometry_manager(&mut self) -> &mut dyn GeometryManager {
         &mut self.geometry_manager
     }
@@ -30,7 +35,9 @@ impl Graphics for VkGraphics {
     fn get_geometry_manager(&self) -> &dyn GeometryManager {
         &self.geometry_manager
     }
+}
 
+impl ProvideRenderer for VkGraphics {
     fn get_mut_renderer(&mut self) -> &mut dyn Render {
         &mut self.renderer
     }
@@ -38,8 +45,12 @@ impl Graphics for VkGraphics {
     fn get_renderer(&self) -> &dyn Render {
         &self.renderer
     }
+}
 
+impl Present for VkGraphics {
     fn present(&mut self, info: PresentInfo) {
         unimplemented!()
     }
 }
+
+impl Graphics for VkGraphics {}

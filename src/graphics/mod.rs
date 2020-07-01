@@ -1,8 +1,12 @@
 pub mod camera;
 pub mod error;
+pub mod texture;
 
 use crate::graphics::error::{LoadError, NotFoundError};
-use crate::graphics::low_level::{Graphics, PresentInfo, Render};
+use crate::graphics::low_level::{
+    Graphics, Present, PresentInfo, ProvideGeometryManager, ProvideRenderer, ProvideTextureManager,
+    Render,
+};
 use crate::graphics::manager::geometry_manager::GeometryManager;
 use crate::graphics::manager::texture_manager::TextureManager;
 use crate::graphics::proxy::geometry_manager::GeometryManagerProxy;
@@ -41,7 +45,7 @@ impl SharedGraphics {
     }
 }
 
-impl Graphics for SharedGraphics {
+impl ProvideTextureManager for SharedGraphics {
     fn get_mut_texture_manager(&mut self) -> &mut dyn TextureManager {
         &mut self.texture_manager
     }
@@ -49,7 +53,9 @@ impl Graphics for SharedGraphics {
     fn get_texture_manager(&self) -> &dyn TextureManager {
         &self.texture_manager
     }
+}
 
+impl ProvideGeometryManager for SharedGraphics {
     fn get_mut_geometry_manager(&mut self) -> &mut dyn GeometryManager {
         &mut self.geometry_manager
     }
@@ -57,7 +63,9 @@ impl Graphics for SharedGraphics {
     fn get_geometry_manager(&self) -> &dyn GeometryManager {
         &self.geometry_manager
     }
+}
 
+impl ProvideRenderer for SharedGraphics {
     fn get_mut_renderer(&mut self) -> &mut dyn Render {
         unimplemented!()
     }
@@ -65,8 +73,12 @@ impl Graphics for SharedGraphics {
     fn get_renderer(&self) -> &dyn Render {
         unimplemented!()
     }
+}
 
+impl Present for SharedGraphics {
     fn present(&mut self, info: PresentInfo) {
         unimplemented!()
     }
 }
+
+impl Graphics for SharedGraphics {}

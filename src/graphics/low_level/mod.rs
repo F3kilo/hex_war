@@ -31,15 +31,26 @@ pub struct RenderContext {
 
 pub trait Render {}
 
-pub trait Graphics {
+pub trait Present {
+    fn present(&mut self, info: PresentInfo);
+}
+
+pub trait ProvideTextureManager {
     fn get_mut_texture_manager(&mut self) -> &mut dyn TextureManager;
     fn get_texture_manager(&self) -> &dyn TextureManager;
+}
 
+pub trait ProvideGeometryManager {
     fn get_mut_geometry_manager(&mut self) -> &mut dyn GeometryManager;
     fn get_geometry_manager(&self) -> &dyn GeometryManager;
+}
 
+pub trait ProvideRenderer {
     fn get_mut_renderer(&mut self) -> &mut dyn Render;
     fn get_renderer(&self) -> &dyn Render;
+}
 
-    fn present(&mut self, info: PresentInfo);
+pub trait Graphics:
+    ProvideTextureManager + ProvideGeometryManager + ProvideRenderer + Present
+{
 }
