@@ -12,7 +12,7 @@ impl fmt::Display for LoadError {
 }
 
 #[derive(Debug)]
-pub enum NotFoundError {}
+pub struct NotFoundError;
 
 impl Error for NotFoundError {}
 impl fmt::Display for NotFoundError {

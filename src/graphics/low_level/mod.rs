@@ -1,5 +1,5 @@
-use crate::graphics::manager::geometry_manager::GeometryManager;
-use crate::graphics::manager::texture_manager::{TextureId, TextureManager};
+use crate::graphics::manager::geometry_manager::ManageGeometry;
+use crate::graphics::manager::texture_manager::{ManageTextures, TextureId};
 use glam::Mat4;
 
 #[derive(Debug, Copy, Clone, Default)]
@@ -29,30 +29,14 @@ pub struct RenderContext {
     pub scene_transforms: SceneTransforms,
 }
 
-pub trait Render {
+pub trait GraphicsBackend {
+    fn get_mut_texture_manager(&mut self) -> &mut dyn ManageTextures;
+    fn get_texture_manager(&self) -> &dyn ManageTextures;
+
+    fn get_mut_geometry_manager(&mut self) -> &mut dyn ManageGeometry;
+    fn get_geometry_manager(&self) -> &dyn ManageGeometry;
+
     fn render(&mut self, context: RenderContext, data: RenderData) -> TextureId;
-}
 
-pub trait Present {
     fn present(&mut self, info: PresentInfo);
-}
-
-pub trait ProvideTextureManager {
-    fn get_mut_texture_manager(&mut self) -> &mut dyn TextureManager;
-    fn get_texture_manager(&self) -> &dyn TextureManager;
-}
-
-pub trait ProvideGeometryManager {
-    fn get_mut_geometry_manager(&mut self) -> &mut dyn GeometryManager;
-    fn get_geometry_manager(&self) -> &dyn GeometryManager;
-}
-
-pub trait ProvideRenderer {
-    fn get_mut_renderer(&mut self) -> &mut dyn Render;
-    fn get_renderer(&self) -> &dyn Render;
-}
-
-pub trait Graphics:
-    ProvideTextureManager + ProvideGeometryManager + ProvideRenderer + Present
-{
 }

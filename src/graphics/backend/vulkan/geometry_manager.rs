@@ -1,5 +1,5 @@
 use crate::graphics::error::{LoadError, NotFoundError};
-use crate::graphics::manager::geometry_manager::{GeometryId, GeometryManager};
+use crate::graphics::manager::geometry_manager::{GeometryId, ManageGeometry};
 use std::path::PathBuf;
 
 #[derive(Debug)]
@@ -11,7 +11,7 @@ impl VkGeometryManager {
     }
 }
 
-impl GeometryManager for VkGeometryManager {
+impl ManageGeometry for VkGeometryManager {
     fn create_geometry(&mut self, path: PathBuf) -> Result<GeometryId, LoadError> {
         unimplemented!()
     }

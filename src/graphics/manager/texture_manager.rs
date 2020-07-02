@@ -5,7 +5,7 @@ use std::path::PathBuf;
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone, Ord, PartialOrd)]
 pub struct TextureId(u64);
 
-pub trait TextureManager {
+pub trait ManageTextures {
     fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError>;
     fn drop_texture(&mut self, id: TextureId) -> bool;
     fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError>;

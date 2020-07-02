@@ -4,15 +4,10 @@ pub mod geometry;
 pub mod scene;
 pub mod texture;
 
-use crate::graphics::error::{LoadError, NotFoundError};
-use crate::graphics::low_level::{
-    Graphics, Present, PresentInfo, ProvideGeometryManager, ProvideRenderer, ProvideTextureManager,
-    Render,
-};
-use crate::graphics::manager::geometry_manager::GeometryManager;
-use crate::graphics::manager::texture_manager::TextureManager;
-use crate::graphics::proxy::geometry_manager::GeometryManagerProxy;
-use crate::graphics::proxy::texture_manager::TextureManagerProxy;
+use crate::graphics::low_level::{GraphicsBackend, PresentInfo, RenderContext, RenderData};
+use crate::graphics::manager::texture_manager::TextureId;
+use crate::graphics::proxy::geometry_manager::GeometryManager;
+use crate::graphics::proxy::texture_manager::TextureManager;
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -24,17 +19,17 @@ pub mod primitive;
 pub mod proxy;
 
 #[derive(Clone)]
-pub struct SharedGraphics {
-    backend: Rc<RefCell<Box<dyn Graphics>>>,
-    texture_manager: TextureManagerProxy,
-    geometry_manager: GeometryManagerProxy,
+pub struct Graphics {
+    backend: Rc<RefCell<Box<dyn GraphicsBackend>>>,
+    texture_manager: TextureManager,
+    geometry_manager: GeometryManager,
 }
 
-impl SharedGraphics {
-    pub fn new(backend: Box<dyn Graphics>) -> Self {
+impl Graphics {
+    pub fn new(backend: Box<dyn GraphicsBackend>) -> Self {
         let backend = Rc::new(RefCell::new(backend));
-        let texture_manager = TextureManagerProxy::new(backend.clone());
-        let geometry_manager = GeometryManagerProxy::new(backend.clone());
+        let texture_manager = TextureManager::new(backend.clone());
+        let geometry_manager = GeometryManager::new(backend.clone());
         Self {
             backend,
             texture_manager,
@@ -42,45 +37,34 @@ impl SharedGraphics {
         }
     }
 
-    pub fn replace_backend(&mut self, new_backend: Box<dyn Graphics>) -> Box<dyn Graphics> {
+    pub fn replace_backend(
+        &mut self,
+        new_backend: Box<dyn GraphicsBackend>,
+    ) -> Box<dyn GraphicsBackend> {
         self.backend.borrow_mut().replace(new_backend)
     }
-}
 
-impl ProvideTextureManager for SharedGraphics {
-    fn get_mut_texture_manager(&mut self) -> &mut dyn TextureManager {
-        &mut self.texture_manager
+    pub fn get_geometry_manager(&self) -> &GeometryManager {
+        &self.geometry_manager
     }
 
-    fn get_texture_manager(&self) -> &dyn TextureManager {
-        &self.texture_manager
-    }
-}
-
-impl ProvideGeometryManager for SharedGraphics {
-    fn get_mut_geometry_manager(&mut self) -> &mut dyn GeometryManager {
+    pub fn get_mut_geometry_manager(&mut self) -> &mut GeometryManager {
         &mut self.geometry_manager
     }
 
-    fn get_geometry_manager(&self) -> &dyn GeometryManager {
-        &self.geometry_manager
+    pub fn get_texture_manager(&self) -> &TextureManager {
+        &self.texture_manager
+    }
+
+    pub fn get_mut_texture_manager(&mut self) -> &mut TextureManager {
+        &mut self.texture_manager
+    }
+
+    pub fn render(&mut self, context: RenderContext, data: RenderData) -> TextureId {
+        RefCell::borrow_mut(&self.backend).render(context, data)
+    }
+
+    pub fn present(&mut self, info: PresentInfo) {
+        RefCell::borrow_mut(&self.backend).present(info)
     }
 }
-
-impl ProvideRenderer for SharedGraphics {
-    fn get_mut_renderer(&mut self) -> &mut dyn Render {
-        unimplemented!()
-    }
-
-    fn get_renderer(&self) -> &dyn Render {
-        unimplemented!()
-    }
-}
-
-impl Present for SharedGraphics {
-    fn present(&mut self, info: PresentInfo) {
-        unimplemented!()
-    }
-}
-
-impl Graphics for SharedGraphics {}
