@@ -7,8 +7,10 @@ pub mod update_timer;
 
 use crate::app::{App, ELWT};
 use crate::graphics::backend::vulkan::VkGraphics;
+use crate::graphics::low_level::{RenderContext, SceneTransforms};
 use crate::graphics::scene::Scene;
-use crate::graphics::Graphics;
+use crate::graphics::texture::UniqueTexture;
+use crate::graphics::{render, Graphics};
 use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
 use crate::hex_war_app::update_timer::UpdateTimer;
@@ -123,10 +125,12 @@ impl HexWarApp {
 
     pub fn draw(&mut self) {
         trace!(self.logger, "HexWarApp draw.");
-        self.render_ui()
+        let ui_image = self.render_ui();
     }
 
-    fn render_ui(&mut self) {}
+    fn render_ui(&mut self) -> UniqueTexture {
+        render::render(&mut self.graphics, &self.cameras.ui, &self.scenes.ui)
+    }
 }
 
 impl App for HexWarApp {
