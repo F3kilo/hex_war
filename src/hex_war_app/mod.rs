@@ -7,11 +7,14 @@ pub mod update_timer;
 
 use crate::app::{App, ELWT};
 use crate::graphics::backend::vulkan::VkGraphics;
-use crate::graphics::low_level::{RenderContext, SceneTransforms};
+use crate::graphics::camera::Camera;
+use crate::graphics::error::LoadError;
+use crate::graphics::geometry::{Geometry, UniqueGeometry};
+use crate::graphics::proxy::texture_manager::TextureManager;
 use crate::graphics::scene::Scene;
 use crate::graphics::texture::UniqueTexture;
 use crate::graphics::{render, Graphics};
-use crate::hex_war_app::cursor::Cursor;
+use crate::hex_war_app::cursor::{Cursor, SpriteCursor};
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
 use crate::hex_war_app::update_timer::UpdateTimer;
 use crate::math::screen_coords::ScreenCoords;
@@ -19,6 +22,7 @@ use crate::math::world_coords::WorldCoords;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
+use std::rc::Rc;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
@@ -46,15 +50,25 @@ pub struct HexWarApp {
 
 impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
-        let cursor = HexWarApp::create_cursor(&logger);
+        let graphics_backend = VkGraphics::new();
+        let graphics = Graphics::new(Box::new(graphics_backend));
+
+        let unit_quad = Geometry::new(
+            UniqueGeometry::new(
+                "geometries/unit_quad.dae".into(),
+                graphics.get_geometry_manager().clone(),
+            )
+            .expect("Can't load unit quad geometry."),
+        );
+
+        let cursor =
+            HexWarApp::create_cursor(&logger, graphics.get_texture_manager().clone(), unit_quad);
+
         let update_timer = UpdateTimer::new(60);
 
         let cameras = Cameras {
             ui: OrthographicCamera::new(WorldCoords::zero(), WorldCoords::zero()), // TODO: Think about coordinates
         };
-
-        let graphics_backend = VkGraphics::new();
-        let graphics = Graphics::new(Box::new(graphics_backend));
 
         let scenes = Scenes {
             ui: Scene::new(),
@@ -74,8 +88,31 @@ impl HexWarApp {
         }
     }
 
-    fn create_cursor(logger: &Logger) -> Cursor {
-        Cursor::new(ScreenCoords::zero())
+    fn create_cursor(logger: &Logger, tex_manager: TextureManager, unit_quad: Geometry) -> Cursor {
+        let resources = Self::load_cursor_resources(tex_manager, unit_quad)
+            .expect("Can't find cursor textures");
+        let repr = SpriteCursor::new(resources, 1f32);
+
+        Cursor::new(WorldCoords::zero(), repr)
+    }
+
+    fn load_cursor_resources(
+        tex_manager: TextureManager,
+        unit_quad: Geometry,
+    ) -> Result<cursor::Resources, LoadError> {
+        let released = Rc::new(UniqueTexture::new(
+            "textures/cursor_released.ktx".into(),
+            tex_manager.clone(),
+        )?);
+        let pressed = Rc::new(UniqueTexture::new(
+            "textures/cursor_pressed.ktx".into(),
+            tex_manager,
+        )?);
+        Ok(cursor::Resources {
+            pressed,
+            released,
+            unit_quad,
+        })
     }
 
     pub fn close_requested(&mut self) {
@@ -85,7 +122,18 @@ impl HexWarApp {
 
     pub fn cursor_moved(&mut self, new_pos: ScreenCoords) {
         trace!(self.logger, "HexWarApp cursor moved: {:?}.", new_pos);
-        self.cursor.move_to(new_pos)
+        let world_pos = self
+            .cameras
+            .ui
+            .to_world(new_pos, 0f32, self.get_screen_size());
+        self.cursor.move_to(world_pos);
+    }
+
+    fn get_screen_size(&self) -> ScreenCoords {
+        ScreenCoords::new(
+            self.window.inner_size().width as i64,
+            self.window.inner_size().height as i64,
+        )
     }
 
     pub fn mouse_button_used(&mut self, button: MouseButton, state: ElementState) {
@@ -125,7 +173,12 @@ impl HexWarApp {
 
     pub fn draw(&mut self) {
         trace!(self.logger, "HexWarApp draw.");
+        self.fill_scenes();
         let ui_image = self.render_ui();
+    }
+
+    fn fill_scenes(&mut self) {
+        self.cursor.add_to_scene(&mut self.scenes.ui)
     }
 
     fn render_ui(&mut self) -> UniqueTexture {
