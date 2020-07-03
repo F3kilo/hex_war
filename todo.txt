@@ -1,0 +1,5 @@
+-- Cursor size settings;
+-- Resource manager;
+-- Error processing;
+-- Improve logging;
+-- Simplify HexWarApp struct(distribute responsibilities);
