@@ -252,6 +252,6 @@ impl App for HexWarApp {
     }
 
     fn draw(&mut self, window_id: WindowId) {
-        unimplemented!()
+        self.draw()
     }
 }
