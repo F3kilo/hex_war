@@ -1,7 +1,7 @@
-mod utils;
-mod entry;
 mod geometry_manager;
 mod texture_manager;
+mod utils;
+mod vk;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
 use crate::graphics::low_level::{GraphicsBackend, PresentInfo, RenderContext, RenderData};

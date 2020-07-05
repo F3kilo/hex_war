@@ -23,4 +23,8 @@ impl Version {
     pub fn patch(&self) -> u32 {
         ash::vk::version_patch(self.version)
     }
+
+    pub fn raw(&self) -> u32 {
+        self.version
+    }
 }
