@@ -34,6 +34,10 @@ impl Instance {
         }
     }
 
+    pub fn raw_handle(&self) -> &ash::Instance {
+        &self.handle
+    }
+
     unsafe fn get_raw_create_info(
         create_info: &CreateInfo,
         app_info: &ash::vk::ApplicationInfo,
