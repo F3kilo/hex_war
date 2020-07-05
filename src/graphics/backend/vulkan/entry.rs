@@ -3,7 +3,6 @@ use ash::version::EntryV1_0;
 use ash::LoadingError;
 use std::error::Error;
 use std::fmt;
-use std::fmt::Display;
 
 #[derive(Clone)]
 pub struct Entry {
