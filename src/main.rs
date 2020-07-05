@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 mod app;
 mod app_init_error;
 mod event_loop;
