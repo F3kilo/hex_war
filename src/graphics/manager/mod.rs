@@ -1,2 +1,2 @@
-pub mod geometry_manager;
-pub mod texture_manager;
+pub mod manage_geometries;
+pub mod manage_textures;

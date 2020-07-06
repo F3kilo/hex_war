@@ -6,7 +6,7 @@ pub mod scene;
 pub mod texture;
 
 use crate::graphics::low_level::{GraphicsBackend, PresentInfo, RenderContext, RenderData};
-use crate::graphics::manager::texture_manager::TextureId;
+use crate::graphics::manager::manage_textures::TextureId;
 use crate::graphics::proxy::geometry_manager::GeometryManager;
 use crate::graphics::proxy::texture_manager::TextureManager;
 use std::borrow::BorrowMut;

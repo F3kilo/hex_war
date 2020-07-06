@@ -5,8 +5,8 @@ mod vk;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
 use crate::graphics::low_level::{GraphicsBackend, PresentInfo, RenderContext, RenderData};
-use crate::graphics::manager::geometry_manager::ManageGeometry;
-use crate::graphics::manager::texture_manager::{ManageTextures, TextureId};
+use crate::graphics::manager::manage_geometries::ManageGeometries;
+use crate::graphics::manager::manage_textures::{ManageTextures, TextureId};
 
 pub struct VkGraphics {
     texture_manager: VkTextureManager,
@@ -33,11 +33,11 @@ impl GraphicsBackend for VkGraphics {
         &self.texture_manager
     }
 
-    fn get_mut_geometry_manager(&mut self) -> &mut dyn ManageGeometry {
+    fn get_mut_geometry_manager(&mut self) -> &mut dyn ManageGeometries {
         &mut self.geometry_manager
     }
 
-    fn get_geometry_manager(&self) -> &dyn ManageGeometry {
+    fn get_geometry_manager(&self) -> &dyn ManageGeometries {
         &self.geometry_manager
     }
 

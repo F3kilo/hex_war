@@ -1,5 +1,5 @@
 use crate::graphics::error::LoadError;
-use crate::graphics::manager::geometry_manager::GeometryId;
+use crate::graphics::manager::manage_geometries::GeometryId;
 use crate::graphics::proxy::geometry_manager::GeometryManager;
 use std::fmt;
 use std::path::PathBuf;
