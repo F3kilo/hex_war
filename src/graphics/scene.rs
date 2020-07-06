@@ -1,6 +1,8 @@
+use crate::graphics::camera::Camera;
 use crate::graphics::geometry::Geometry;
-use crate::graphics::low_level::RenderData;
-use crate::graphics::texture::Texture;
+use crate::graphics::low_level::{RenderContext, RenderData, SceneTransforms};
+use crate::graphics::texture::{Texture, UniqueTexture};
+use crate::graphics::Graphics;
 use glam::{Mat4, Vec2};
 use palette::Srgba;
 
@@ -36,12 +38,14 @@ pub struct TexturedGeometry {
 #[derive(Clone, Debug)]
 pub struct Scene {
     textured_geometries: Vec<TexturedGeometry>,
+    transforms: Mat4,
 }
 
 impl Scene {
     pub fn new() -> Self {
         Self {
             textured_geometries: Vec::new(),
+            transforms: Mat4::default(),
         }
     }
 
@@ -53,7 +57,18 @@ impl Scene {
         self.textured_geometries.clear()
     }
 
-    pub fn get_render_data(&self) -> RenderData {
-        RenderData {}
+    pub fn render(&self, camera: &impl Camera, graphics: &mut Graphics) -> Texture {
+        let render_context = RenderContext {
+            scene_transforms: SceneTransforms {
+                world: Default::default(),
+                view: camera.get_view_transform(),
+                proj: camera.get_proj_transform(),
+            },
+        };
+        let texture_id = graphics.render(render_context);
+        Texture::new(
+            UniqueTexture::from_raw(texture_id, graphics.get_texture_manager().clone())
+                .expect("Texture manager doesn't contains just presented texture."),
+        )
     }
 }

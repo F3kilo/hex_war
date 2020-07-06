@@ -1,7 +1,6 @@
 pub mod camera;
 pub mod error;
 pub mod geometry;
-pub mod render;
 pub mod scene;
 pub mod texture;
 

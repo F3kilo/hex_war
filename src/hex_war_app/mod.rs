@@ -12,8 +12,8 @@ use crate::graphics::error::LoadError;
 use crate::graphics::geometry::{Geometry, UniqueGeometry};
 use crate::graphics::proxy::texture_manager::TextureManager;
 use crate::graphics::scene::Scene;
-use crate::graphics::texture::UniqueTexture;
-use crate::graphics::{render, Graphics};
+use crate::graphics::texture::{Texture, UniqueTexture};
+use crate::graphics::Graphics;
 use crate::hex_war_app::cursor::{Cursor, SpriteCursor};
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
 use crate::hex_war_app::update_timer::UpdateTimer;
@@ -181,8 +181,8 @@ impl HexWarApp {
         self.cursor.add_to_scene(&mut self.scenes.ui)
     }
 
-    fn render_ui(&mut self) -> UniqueTexture {
-        render::render(&mut self.graphics, &self.cameras.ui, &self.scenes.ui)
+    fn render_ui(&mut self) -> Texture {
+        self.scenes.ui.render(&self.cameras.ui, &mut self.graphics)
     }
 }
 
