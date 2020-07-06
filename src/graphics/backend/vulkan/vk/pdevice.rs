@@ -75,6 +75,32 @@ impl PhysicalDevice {
             Ok(props)
         }
     }
+
+    pub fn get_physical_device_memory_properties(&self) -> ash::vk::PhysicalDeviceMemoryProperties {
+        unsafe {
+            self.instance
+                .raw_handle()
+                .get_physical_device_memory_properties(self.handle)
+        }
+    }
+
+    pub fn get_physical_device_properties(&self) -> ash::vk::PhysicalDeviceProperties {
+        unsafe {
+            self.instance
+                .raw_handle()
+                .get_physical_device_properties(self.handle)
+        }
+    }
+
+    pub fn get_physical_device_queue_family_properties(
+        &self,
+    ) -> Vec<ash::vk::QueueFamilyProperties> {
+        unsafe {
+            self.instance
+                .raw_handle()
+                .get_physical_device_queue_family_properties(self.handle)
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
