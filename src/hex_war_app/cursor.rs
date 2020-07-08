@@ -1,5 +1,5 @@
 use crate::graphics::geometry::Geometry;
-use crate::graphics::scene::{Instance, Scene, TexturedGeometry};
+use crate::graphics::manager::manage_scenes::{Instance, TexturedGeometry};
 use crate::graphics::texture::Texture;
 use crate::math::world_coords::WorldCoords;
 use glam::{Mat4, Quat, Vec3};
@@ -29,30 +29,31 @@ impl SpriteCursor {
         Self { resources, scale }
     }
 
-    pub fn add_to_scene(&self, scene: &mut Scene, state: State, pos: WorldCoords) {
-        let texture = match state {
-            State::Pressed => self.resources.pressed.clone(),
-            State::Released => self.resources.released.clone(),
-        };
-
-        let instance = Instance {
-            transforms: Mat4::from_scale_rotation_translation(
-                Vec3::splat(self.scale),
-                Quat::default(),
-                pos.get_inner(),
-            ),
-            uv_transforms: Default::default(),
-            color: Srgba::new(1.0, 1.0, 1.0, 1.0),
-        };
-
-        let textured_geometry = TexturedGeometry {
-            geometry: self.resources.unit_quad.clone(),
-            texture,
-            instance,
-        };
-
-        scene.add_textured_geometry(textured_geometry)
-    }
+    // pub fn add_to_scene(&self, scene: &mut Scene, state: State, pos: WorldCoords) {
+    //     let texture = match state {
+    //         State::Pressed => self.resources.pressed.clone(),
+    //         State::Released => self.resources.released.clone(),
+    //     };
+    //
+    //     let instance = Instance {
+    //         transforms: Mat4::from_scale_rotation_translation(
+    //             Vec3::splat(self.scale),
+    //             Quat::default(),
+    //             pos.get_inner(),
+    //         ),
+    //         uv_transforms: Default::default(),
+    //         color: Srgba::new(1.0, 1.0, 1.0, 1.0),
+    //     };
+    //
+    //
+    //     let textured_geometry = TexturedGeometry {
+    //         geometry: self.resources.unit_quad.clone(),
+    //         texture,
+    //         instance,
+    //     };
+    //
+    //     scene.add_textured_geometry(textured_geometry)
+    // }
 }
 
 #[derive(Debug)]
@@ -83,8 +84,8 @@ impl Cursor {
         self.state = new_state
     }
 
-    pub fn add_to_scene(&self, scene: &mut Scene) {
-        self.representation
-            .add_to_scene(scene, self.state, self.pos)
-    }
+    // pub fn add_to_scene(&self, scene: &mut Scene) {
+    //     self.representation
+    //         .add_to_scene(scene, self.state, self.pos)
+    // }
 }

@@ -1,10 +1,9 @@
 pub mod camera;
 pub mod error;
 pub mod geometry;
-pub mod scene;
 pub mod texture;
 
-use crate::graphics::low_level::{GraphicsBackend, PresentInfo, RenderContext, RenderData};
+use crate::graphics::low_level::{GraphicsBackend, PresentInfo, RenderData};
 use crate::graphics::manager::manage_textures::TextureId;
 use crate::graphics::proxy::geometry_manager::GeometryManager;
 use crate::graphics::proxy::texture_manager::TextureManager;
@@ -58,10 +57,6 @@ impl Graphics {
 
     pub fn get_mut_texture_manager(&mut self) -> &mut TextureManager {
         &mut self.texture_manager
-    }
-
-    pub fn render(&mut self, context: RenderContext, data: RenderData) -> TextureId {
-        RefCell::borrow_mut(&self.backend).render(context, data)
     }
 
     pub fn present(&mut self, info: PresentInfo) {
