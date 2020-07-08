@@ -1,3 +1,4 @@
+use crate::graphics::error::NotFoundError;
 use crate::graphics::low_level::GraphicsBackend;
 use crate::graphics::manager::manage_scenes::{
     AdditionError, RenderContext, SceneId, TexturedGeometry,
@@ -34,6 +35,11 @@ impl SceneManager {
         let mut back = RefCell::borrow_mut(&self.backend);
         back.get_mut_scene_manager()
             .add_textured_geometry(id, instance)
+    }
+
+    pub fn clear(&mut self, id: SceneId) -> Result<(), NotFoundError> {
+        let mut back = RefCell::borrow_mut(&self.backend);
+        back.get_mut_scene_manager().clear(id)
     }
 
     pub fn render(&mut self, id: SceneId, context: &RenderContext) -> TextureId {

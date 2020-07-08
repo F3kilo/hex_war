@@ -1,3 +1,4 @@
+use crate::graphics::error::NotFoundError;
 use crate::graphics::manager::manage_geometries::GeometryId;
 use crate::graphics::manager::manage_textures::TextureId;
 use glam::{Mat4, Vec2};
@@ -17,6 +18,8 @@ pub trait ManageScenes {
         id: SceneId,
         instance: TexturedGeometry,
     ) -> Result<(), AdditionError>;
+
+    fn clear(&mut self, id: SceneId) -> Result<(), NotFoundError>;
 
     fn render(&mut self, id: SceneId, context: &RenderContext) -> TextureId;
 

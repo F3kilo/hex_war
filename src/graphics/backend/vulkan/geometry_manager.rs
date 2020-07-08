@@ -13,22 +13,22 @@ impl VkGeometryManager {
 
 impl ManageGeometries for VkGeometryManager {
     fn create_geometry(&mut self, path: PathBuf) -> Result<GeometryId, LoadError> {
-        unimplemented!()
+        todo!()
     }
 
     fn drop_geometry(&mut self, id: GeometryId) -> bool {
-        unimplemented!()
+        todo!()
     }
 
     fn get_path(&self, id: GeometryId) -> Result<PathBuf, NotFoundError> {
-        unimplemented!()
+        todo!()
     }
 
     fn contains(&self, id: GeometryId) -> bool {
-        unimplemented!()
+        todo!()
     }
 
     fn ids(&self) -> Vec<GeometryId> {
-        unimplemented!()
+        todo!()
     }
 }

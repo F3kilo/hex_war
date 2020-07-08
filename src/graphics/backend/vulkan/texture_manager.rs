@@ -1,5 +1,5 @@
 use crate::graphics::error::{LoadError, NotFoundError};
-use crate::graphics::manager::manage_textures::{TextureId, ManageTextures};
+use crate::graphics::manager::manage_textures::{ManageTextures, TextureId};
 use crate::math::screen_coords::ScreenCoords;
 use std::path::PathBuf;
 
@@ -14,26 +14,26 @@ impl VkTextureManager {
 
 impl ManageTextures for VkTextureManager {
     fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError> {
-        unimplemented!()
+        todo!()
     }
 
     fn drop_texture(&mut self, id: TextureId) -> bool {
-        unimplemented!()
+        todo!()
     }
 
     fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError> {
-        unimplemented!()
+        todo!()
     }
 
     fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError> {
-        unimplemented!()
+        todo!()
     }
 
     fn contains(&self, id: TextureId) -> bool {
-        unimplemented!()
+        todo!()
     }
 
     fn ids(&self) -> Vec<TextureId> {
-        unimplemented!()
+        todo!()
     }
 }

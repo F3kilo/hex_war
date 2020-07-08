@@ -1,3 +1,4 @@
+use crate::graphics::error::NotFoundError;
 use crate::graphics::manager::manage_scenes::{
     AdditionError, ManageScenes, RenderContext, SceneId, TexturedGeometry,
 };
@@ -13,11 +14,11 @@ impl VkSceneManager {
 
 impl ManageScenes for VkSceneManager {
     fn create_scene(&mut self) -> SceneId {
-        unimplemented!()
+        todo!()
     }
 
     fn drop_scene(&mut self, id: SceneId) -> bool {
-        unimplemented!()
+        todo!()
     }
 
     fn add_textured_geometry(
@@ -25,18 +26,22 @@ impl ManageScenes for VkSceneManager {
         id: SceneId,
         instance: TexturedGeometry,
     ) -> Result<(), AdditionError> {
-        unimplemented!()
+        todo!()
+    }
+
+    fn clear(&mut self, id: SceneId) -> Result<(), NotFoundError> {
+        todo!()
     }
 
     fn render(&mut self, id: SceneId, context: &RenderContext) -> TextureId {
-        unimplemented!()
+        todo!()
     }
 
     fn contains(&self, id: SceneId) -> bool {
-        unimplemented!()
+        todo!()
     }
 
     fn ids(&self) -> Vec<SceneId> {
-        unimplemented!()
+        todo!()
     }
 }

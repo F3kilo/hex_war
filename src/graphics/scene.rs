@@ -39,6 +39,13 @@ impl Scene {
         }
     }
 
+    pub fn clear(&mut self) {
+        self.scene_manager
+            .clear(self.id)
+            .expect("Scene was unexpectedly not found."); // TODO: error processing
+        self.used_resources.clear();
+    }
+
     pub fn render(&mut self, context: &RenderContext) -> Texture {
         let tex_id = self.scene_manager.render(self.id, context);
         Texture::from_raw(tex_id, self.texture_manager.clone())
