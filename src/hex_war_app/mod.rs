@@ -11,6 +11,7 @@ use crate::graphics::camera::Camera;
 use crate::graphics::error::LoadError;
 use crate::graphics::geometry::Geometry;
 use crate::graphics::proxy::texture_manager::TextureManager;
+use crate::graphics::scene::Scene;
 use crate::graphics::texture::Texture;
 use crate::graphics::Graphics;
 use crate::hex_war_app::cursor::{Cursor, SpriteCursor};
@@ -30,10 +31,10 @@ struct Cameras {
     pub ui: OrthographicCamera,
 }
 
-// struct Scenes {
-//     pub ui: Scene,
-//     pub game: Scene,
-// }
+struct Scenes {
+    pub ui: Scene,
+    pub game: Scene,
+}
 
 pub struct HexWarApp {
     window: Window,
@@ -43,7 +44,7 @@ pub struct HexWarApp {
     update_timer: UpdateTimer,
     cameras: Cameras,
     graphics: Graphics,
-    // scenes: Scenes,
+    scenes: Scenes,
 }
 
 impl HexWarApp {
@@ -65,10 +66,10 @@ impl HexWarApp {
             ui: OrthographicCamera::new(WorldCoords::zero(), WorldCoords::zero()), // TODO: Think about coordinates
         };
 
-        // let scenes = Scenes {
-        //     ui: Scene::new(),
-        //     game: Scene::new(),
-        // };
+        let scenes = Scenes {
+            ui: Scene::new(graphics.get_scene_manager(), graphics.get_texture_manager()),
+            game: Scene::new(graphics.get_scene_manager(), graphics.get_texture_manager()),
+        };
 
         trace!(logger, "HexWarApp initialized");
         Self {
@@ -79,7 +80,7 @@ impl HexWarApp {
             update_timer,
             cameras,
             graphics,
-            // scenes,
+            scenes,
         }
     }
 
