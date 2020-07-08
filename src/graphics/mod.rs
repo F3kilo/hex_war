@@ -5,6 +5,7 @@ pub mod texture;
 
 use crate::graphics::low_level::{GraphicsBackend, PresentInfo};
 use crate::graphics::proxy::geometry_manager::GeometryManager;
+use crate::graphics::proxy::scene_manager::SceneManager;
 use crate::graphics::proxy::texture_manager::TextureManager;
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
@@ -21,6 +22,7 @@ pub struct Graphics {
     backend: Rc<RefCell<Box<dyn GraphicsBackend>>>,
     texture_manager: TextureManager,
     geometry_manager: GeometryManager,
+    scene_manager: SceneManager,
 }
 
 impl Graphics {
@@ -28,10 +30,12 @@ impl Graphics {
         let backend = Rc::new(RefCell::new(backend));
         let texture_manager = TextureManager::new(backend.clone());
         let geometry_manager = GeometryManager::new(backend.clone());
+        let scene_manager = SceneManager::new(backend.clone());
         Self {
             backend,
             texture_manager,
             geometry_manager,
+            scene_manager,
         }
     }
 
@@ -56,6 +60,14 @@ impl Graphics {
 
     pub fn get_mut_texture_manager(&mut self) -> &mut TextureManager {
         &mut self.texture_manager
+    }
+
+    pub fn get_scene_manager(&self) -> &SceneManager {
+        &self.scene_manager
+    }
+
+    pub fn get_mut_scene_manager(&mut self) -> &mut SceneManager {
+        &mut self.scene_manager
     }
 
     pub fn present(&mut self, info: PresentInfo) {
