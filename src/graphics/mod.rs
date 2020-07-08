@@ -46,28 +46,16 @@ impl Graphics {
         self.backend.borrow_mut().replace(new_backend)
     }
 
-    pub fn get_geometry_manager(&self) -> &GeometryManager {
-        &self.geometry_manager
+    pub fn get_geometry_manager(&self) -> GeometryManager {
+        self.geometry_manager.clone()
     }
 
-    pub fn get_mut_geometry_manager(&mut self) -> &mut GeometryManager {
-        &mut self.geometry_manager
+    pub fn get_texture_manager(&self) -> TextureManager {
+        self.texture_manager.clone()
     }
 
-    pub fn get_texture_manager(&self) -> &TextureManager {
-        &self.texture_manager
-    }
-
-    pub fn get_mut_texture_manager(&mut self) -> &mut TextureManager {
-        &mut self.texture_manager
-    }
-
-    pub fn get_scene_manager(&self) -> &SceneManager {
-        &self.scene_manager
-    }
-
-    pub fn get_mut_scene_manager(&mut self) -> &mut SceneManager {
-        &mut self.scene_manager
+    pub fn get_scene_manager(&self) -> SceneManager {
+        self.scene_manager.clone()
     }
 
     pub fn present(&mut self, info: PresentInfo) {

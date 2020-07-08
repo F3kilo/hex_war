@@ -55,13 +55,12 @@ impl HexWarApp {
         let unit_quad = Geometry::new(
             UniqueGeometry::new(
                 "geometries/unit_quad.dae".into(),
-                graphics.get_geometry_manager().clone(),
+                graphics.get_geometry_manager(),
             )
             .expect("Can't load unit quad geometry."),
         );
 
-        let cursor =
-            HexWarApp::create_cursor(&logger, graphics.get_texture_manager().clone(), unit_quad);
+        let cursor = HexWarApp::create_cursor(&logger, graphics.get_texture_manager(), unit_quad);
 
         let update_timer = UpdateTimer::new(60);
 
