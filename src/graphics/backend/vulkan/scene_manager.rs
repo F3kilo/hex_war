@@ -1,4 +1,3 @@
-use crate::graphics::error::LoadError;
 use crate::graphics::manager::manage_scenes::{
     AdditionError, ManageScenes, RenderContext, SceneId, TexturedGeometry,
 };
@@ -13,7 +12,7 @@ impl VkSceneManager {
 }
 
 impl ManageScenes for VkSceneManager {
-    fn create_scene(&mut self) -> Result<SceneId, LoadError> {
+    fn create_scene(&mut self) -> SceneId {
         unimplemented!()
     }
 

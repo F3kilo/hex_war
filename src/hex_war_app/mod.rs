@@ -9,9 +9,9 @@ use crate::app::{App, ELWT};
 use crate::graphics::backend::vulkan::VkGraphics;
 use crate::graphics::camera::Camera;
 use crate::graphics::error::LoadError;
-use crate::graphics::geometry::{Geometry, UniqueGeometry};
+use crate::graphics::geometry::Geometry;
 use crate::graphics::proxy::texture_manager::TextureManager;
-use crate::graphics::texture::UniqueTexture;
+use crate::graphics::texture::Texture;
 use crate::graphics::Graphics;
 use crate::hex_war_app::cursor::{Cursor, SpriteCursor};
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
@@ -21,7 +21,6 @@ use crate::math::world_coords::WorldCoords;
 use main_menu::MainMenu;
 use slog::Logger;
 use state::State;
-use std::rc::Rc;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
@@ -53,12 +52,10 @@ impl HexWarApp {
         let graphics = Graphics::new(Box::new(graphics_backend));
 
         let unit_quad = Geometry::new(
-            UniqueGeometry::new(
-                "geometries/unit_quad.dae".into(),
-                graphics.get_geometry_manager(),
-            )
-            .expect("Can't load unit quad geometry."),
-        );
+            "geometries/unit_quad.dae".into(),
+            graphics.get_geometry_manager(),
+        )
+        .expect("Can't load unit quad geometry.");
 
         let cursor = HexWarApp::create_cursor(&logger, graphics.get_texture_manager(), unit_quad);
 
@@ -98,14 +95,8 @@ impl HexWarApp {
         tex_manager: TextureManager,
         unit_quad: Geometry,
     ) -> Result<cursor::Resources, LoadError> {
-        let released = Rc::new(UniqueTexture::new(
-            "textures/cursor_released.ktx".into(),
-            tex_manager.clone(),
-        )?);
-        let pressed = Rc::new(UniqueTexture::new(
-            "textures/cursor_pressed.ktx".into(),
-            tex_manager,
-        )?);
+        let released = Texture::new("textures/cursor_released.ktx".into(), tex_manager.clone())?;
+        let pressed = Texture::new("textures/cursor_pressed.ktx".into(), tex_manager)?;
         Ok(cursor::Resources {
             pressed,
             released,

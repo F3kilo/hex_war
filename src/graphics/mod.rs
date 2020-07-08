@@ -1,6 +1,7 @@
 pub mod camera;
 pub mod error;
 pub mod geometry;
+pub mod scene;
 pub mod texture;
 
 use crate::graphics::low_level::{GraphicsBackend, PresentInfo};

@@ -3,6 +3,7 @@ use crate::graphics::manager::manage_textures::TextureId;
 use crate::graphics::proxy::texture_manager::TextureManager;
 use crate::math::screen_coords::ScreenCoords;
 use std::fmt;
+use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 use std::rc::Rc;
 
@@ -22,6 +23,10 @@ impl UniqueTexture {
             return Err(NotFoundError);
         }
         Ok(Self { id, manager })
+    }
+
+    pub fn get_id(&self) -> TextureId {
+        self.id
     }
 
     pub fn get_path(&self) -> PathBuf {
@@ -49,4 +54,47 @@ impl fmt::Debug for UniqueTexture {
     }
 }
 
-pub type Texture = Rc<UniqueTexture>;
+impl PartialEq for UniqueTexture {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for UniqueTexture {}
+
+impl Hash for UniqueTexture {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        Hash::hash(&self.id, state)
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub struct Texture {
+    unique: Rc<UniqueTexture>,
+}
+
+impl Texture {
+    pub fn new(path: PathBuf, manager: TextureManager) -> Result<Self, LoadError> {
+        UniqueTexture::new(path, manager).map(|unique| Self {
+            unique: Rc::new(unique),
+        })
+    }
+
+    pub fn get_id(&self) -> TextureId {
+        self.unique.get_id()
+    }
+
+    pub fn from_raw(id: TextureId, manager: TextureManager) -> Result<Self, NotFoundError> {
+        UniqueTexture::from_raw(id, manager).map(|unique| Self {
+            unique: Rc::new(unique),
+        })
+    }
+
+    pub fn get_path(&self) -> PathBuf {
+        self.unique.get_path()
+    }
+
+    pub fn get_size(&self) -> ScreenCoords {
+        self.unique.get_size()
+    }
+}

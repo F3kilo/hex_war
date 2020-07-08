@@ -1,4 +1,3 @@
-use crate::graphics::error::LoadError;
 use crate::graphics::low_level::GraphicsBackend;
 use crate::graphics::manager::manage_scenes::{
     AdditionError, RenderContext, SceneId, TexturedGeometry,
@@ -17,17 +16,17 @@ impl SceneManager {
         Self { backend }
     }
 
-    fn create_scene(&mut self) -> Result<SceneId, LoadError> {
+    pub fn create_scene(&mut self) -> SceneId {
         let mut back = RefCell::borrow_mut(&self.backend);
         back.get_mut_scene_manager().create_scene()
     }
 
-    fn drop_scene(&mut self, id: SceneId) -> bool {
+    pub fn drop_scene(&mut self, id: SceneId) -> bool {
         let mut back = RefCell::borrow_mut(&self.backend);
         back.get_mut_scene_manager().drop_scene(id)
     }
 
-    fn add_textured_geometry(
+    pub fn add_textured_geometry(
         &mut self,
         id: SceneId,
         instance: TexturedGeometry,
@@ -37,17 +36,17 @@ impl SceneManager {
             .add_textured_geometry(id, instance)
     }
 
-    fn render(&mut self, id: SceneId, context: &RenderContext) -> TextureId {
+    pub fn render(&mut self, id: SceneId, context: &RenderContext) -> TextureId {
         let mut back = RefCell::borrow_mut(&self.backend);
         back.get_mut_scene_manager().render(id, context)
     }
 
-    fn contains(&self, id: SceneId) -> bool {
+    pub fn contains(&self, id: SceneId) -> bool {
         let back = RefCell::borrow(&self.backend);
         back.get_scene_manager().contains(id)
     }
 
-    fn ids(&self) -> Vec<SceneId> {
+    pub fn ids(&self) -> Vec<SceneId> {
         let back = RefCell::borrow(&self.backend);
         back.get_scene_manager().ids()
     }

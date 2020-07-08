@@ -1,4 +1,3 @@
-use crate::graphics::error::LoadError;
 use crate::graphics::manager::manage_geometries::GeometryId;
 use crate::graphics::manager::manage_textures::TextureId;
 use glam::{Mat4, Vec2};
@@ -10,7 +9,7 @@ use std::fmt;
 pub struct SceneId(u64);
 
 pub trait ManageScenes {
-    fn create_scene(&mut self) -> Result<SceneId, LoadError>;
+    fn create_scene(&mut self) -> SceneId;
     fn drop_scene(&mut self, id: SceneId) -> bool;
 
     fn add_textured_geometry(
@@ -18,7 +17,7 @@ pub trait ManageScenes {
         id: SceneId,
         instance: TexturedGeometry,
     ) -> Result<(), AdditionError>;
-    
+
     fn render(&mut self, id: SceneId, context: &RenderContext) -> TextureId;
 
     fn contains(&self, id: SceneId) -> bool;
