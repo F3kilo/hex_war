@@ -1,8 +1,10 @@
 mod geometry_manager;
+mod scene_manager;
 mod texture_manager;
 mod utils;
 mod vk;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
+use crate::graphics::backend::vulkan::scene_manager::VkSceneManager;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
 use crate::graphics::low_level::{GraphicsBackend, PresentInfo};
 use crate::graphics::manager::manage_geometries::ManageGeometries;
@@ -12,15 +14,18 @@ use crate::graphics::manager::manage_textures::ManageTextures;
 pub struct VkGraphics {
     texture_manager: VkTextureManager,
     geometry_manager: VkGeometryManager,
+    scene_manager: VkSceneManager,
 }
 
 impl VkGraphics {
     pub fn new() -> Self {
         let texture_manager = VkTextureManager::new();
         let geometry_manager = VkGeometryManager::new();
+        let scene_manager = VkSceneManager::new();
         Self {
             texture_manager,
             geometry_manager,
+            scene_manager,
         }
     }
 }
@@ -43,11 +48,11 @@ impl GraphicsBackend for VkGraphics {
     }
 
     fn get_mut_scene_manager(&mut self) -> &mut dyn ManageScenes {
-        unimplemented!()
+        &mut self.scene_manager
     }
 
     fn get_scene_manager(&self) -> &dyn ManageScenes {
-        unimplemented!()
+        &self.scene_manager
     }
 
     fn present(&mut self, info: PresentInfo) {
