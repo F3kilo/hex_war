@@ -85,7 +85,7 @@ impl Cursor {
     }
 
     // pub fn add_to_scene(&self, scene: &mut Scene) {
-    //     self.representation qwe
+    //     self.representation
     //         .add_to_scene(scene, self.state, self.pos)
     // }
 }
