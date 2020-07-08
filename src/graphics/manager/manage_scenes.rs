@@ -13,11 +13,7 @@ pub trait ManageScenes {
     fn create_scene(&mut self) -> SceneId;
     fn drop_scene(&mut self, id: SceneId) -> bool;
 
-    fn add_textured_geometry(
-        &mut self,
-        id: SceneId,
-        instance: TexturedGeometry,
-    ) -> Result<(), AdditionError>;
+    fn add_item(&mut self, id: SceneId, item: SceneItem) -> Result<(), AdditionError>;
 
     fn clear(&mut self, id: SceneId) -> Result<(), NotFoundError>;
 
@@ -97,4 +93,9 @@ impl fmt::Display for AdditionError {
             }
         }
     }
+}
+
+#[derive(Debug, Clone)]
+pub enum SceneItem {
+    TexturedGeometry(TexturedGeometry),
 }

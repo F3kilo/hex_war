@@ -25,17 +25,14 @@ impl Scene {
         }
     }
 
-    pub fn add_textured_geometry(&mut self, instance: TexturedGeometry) {
-        self.used_resources.insert(instance.texture.clone().into());
-        self.used_resources.insert(instance.geometry.clone().into());
-        let result = self
-            .scene_manager
-            .add_textured_geometry(self.id, instance.into());
+    pub fn add_item(&mut self, item: SceneItem) {
+        self.used_resources.extend(item.get_resources());
+        let result = self.scene_manager.add_item(self.id, item.into());
         if let Err(e) = result {
             panic!(
                 "Unexpected error, when adding textured geometry to scene: {:?}",
                 e
-            )
+            ) // TODO: error processing
         }
     }
 
@@ -77,7 +74,7 @@ impl From<TexturedGeometry> for manage_scenes::TexturedGeometry {
 }
 
 #[derive(Clone, Hash, Eq, PartialEq)]
-enum Resource {
+pub enum Resource {
     Texture(Texture),
     Geometry(Geometry),
 }
@@ -91,5 +88,54 @@ impl From<Texture> for Resource {
 impl From<Geometry> for Resource {
     fn from(geom: Geometry) -> Self {
         Resource::Geometry(geom)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum SceneItem {
+    TexturedGeometry(TexturedGeometry),
+}
+
+impl SceneItem {
+    pub fn get_resources(&self) -> impl Iterator<Item = Resource> + '_ {
+        match self {
+            SceneItem::TexturedGeometry(tg) => TexturedGeometryResourcesIterator::new(tg),
+        }
+    }
+}
+
+impl From<SceneItem> for manage_scenes::SceneItem {
+    fn from(item: SceneItem) -> Self {
+        match item {
+            SceneItem::TexturedGeometry(tg) => {
+                manage_scenes::SceneItem::TexturedGeometry(tg.into())
+            }
+        }
+    }
+}
+
+struct TexturedGeometryResourcesIterator<'a> {
+    index: usize,
+    tg: &'a TexturedGeometry,
+}
+
+impl<'a> TexturedGeometryResourcesIterator<'a> {
+    pub fn new(textured_geometry: &'a TexturedGeometry) -> Self {
+        Self {
+            index: 0,
+            tg: textured_geometry,
+        }
+    }
+}
+
+impl<'a> Iterator for TexturedGeometryResourcesIterator<'a> {
+    type Item = Resource;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match &self.index {
+            0 => Some(Resource::Geometry(self.tg.geometry.clone())),
+            1 => Some(Resource::Texture(self.tg.texture.clone())),
+            _ => None,
+        }
     }
 }
