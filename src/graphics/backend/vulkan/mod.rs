@@ -4,10 +4,10 @@ mod utils;
 mod vk;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
-use crate::graphics::low_level::{GraphicsBackend, PresentInfo, RenderData};
+use crate::graphics::low_level::{GraphicsBackend, PresentInfo};
 use crate::graphics::manager::manage_geometries::ManageGeometries;
 use crate::graphics::manager::manage_scenes::ManageScenes;
-use crate::graphics::manager::manage_textures::{ManageTextures, TextureId};
+use crate::graphics::manager::manage_textures::ManageTextures;
 
 pub struct VkGraphics {
     texture_manager: VkTextureManager,

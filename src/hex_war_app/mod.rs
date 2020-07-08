@@ -11,7 +11,7 @@ use crate::graphics::camera::Camera;
 use crate::graphics::error::LoadError;
 use crate::graphics::geometry::{Geometry, UniqueGeometry};
 use crate::graphics::proxy::texture_manager::TextureManager;
-use crate::graphics::texture::{Texture, UniqueTexture};
+use crate::graphics::texture::UniqueTexture;
 use crate::graphics::Graphics;
 use crate::hex_war_app::cursor::{Cursor, SpriteCursor};
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
@@ -173,16 +173,16 @@ impl HexWarApp {
     pub fn draw(&mut self) {
         trace!(self.logger, "HexWarApp draw.");
         self.fill_scenes();
-        let ui_image = self.render_ui();
+        // let ui_image = self.render_ui();
     }
 
     fn fill_scenes(&mut self) {
-        self.cursor.add_to_scene(&mut self.scenes.ui)
+        // self.cursor.add_to_scene(&mut self.scenes.ui)
     }
 
-    fn render_ui(&mut self) -> Texture {
-        self.scenes.ui.render(&self.cameras.ui, &mut self.graphics)
-    }
+    // fn render_ui(&mut self) -> Texture {
+    //     self.scenes.ui.render(&self.cameras.ui, &mut self.graphics)
+    // }
 }
 
 impl App for HexWarApp {

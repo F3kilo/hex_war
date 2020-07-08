@@ -1,9 +1,6 @@
 use crate::graphics::geometry::Geometry;
-use crate::graphics::manager::manage_scenes::{Instance, TexturedGeometry};
 use crate::graphics::texture::Texture;
 use crate::math::world_coords::WorldCoords;
-use glam::{Mat4, Quat, Vec3};
-use palette::Srgba;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum State {
