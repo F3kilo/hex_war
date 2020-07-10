@@ -10,6 +10,7 @@ use crate::graphics::backend::vulkan::VkGraphics;
 use crate::graphics::camera::Camera;
 use crate::graphics::error::LoadError;
 use crate::graphics::geometry::Geometry;
+use crate::graphics::manager::manage_scenes::{RenderContext, SceneTransforms};
 use crate::graphics::proxy::geometry_manager::GeometryManager;
 use crate::graphics::proxy::texture_manager::TextureManager;
 use crate::graphics::scene::Scene;
@@ -166,16 +167,20 @@ impl HexWarApp {
     pub fn draw(&mut self) {
         trace!(self.logger, "HexWarApp draw.");
         self.fill_scenes();
-        // let ui_image = self.render_ui();
+
+        let scene_transforms = SceneTransforms {
+            view: self.cameras.ui.get_view_transform(),
+            proj: self.cameras.ui.get_proj_transform(),
+            ..Default::default()
+        };
+
+        let ctx = RenderContext { scene_transforms };
+        let ui_image = self.scenes.ui.render(&ctx);
     }
 
     fn fill_scenes(&mut self) {
-        // self.cursor.add_to_scene(&mut self.scenes.ui)
+        self.cursor.add_to_scene(&mut self.scenes.ui)
     }
-
-    // fn render_ui(&mut self) -> Texture {
-    //     self.scenes.ui.render(&self.cameras.ui, &mut self.graphics)
-    // }
 }
 
 impl App for HexWarApp {
