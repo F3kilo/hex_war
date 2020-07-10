@@ -10,19 +10,22 @@ use crate::graphics::backend::{GraphicsBackend, PresentInfo};
 use crate::graphics::manager::manage_geometries::ManageGeometries;
 use crate::graphics::manager::manage_scenes::ManageScenes;
 use crate::graphics::manager::manage_textures::ManageTextures;
+use slog::Logger;
 
 pub struct VkGraphics {
+    logger: Logger,
     texture_manager: VkTextureManager,
     geometry_manager: VkGeometryManager,
     scene_manager: VkSceneManager,
 }
 
 impl VkGraphics {
-    pub fn new() -> Self {
-        let texture_manager = VkTextureManager::new();
-        let geometry_manager = VkGeometryManager::new();
-        let scene_manager = VkSceneManager::new();
+    pub fn new(logger: Logger) -> Self {
+        let texture_manager = VkTextureManager::new(logger.clone());
+        let geometry_manager = VkGeometryManager::new(logger.clone());
+        let scene_manager = VkSceneManager::new(logger.clone());
         Self {
+            logger,
             texture_manager,
             geometry_manager,
             scene_manager,

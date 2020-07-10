@@ -1,14 +1,17 @@
 use crate::graphics::error::{LoadError, NotFoundError};
 use crate::graphics::manager::manage_textures::{ManageTextures, TextureId};
 use crate::math::screen_coords::ScreenCoords;
+use slog::Logger;
 use std::path::PathBuf;
 
 #[derive(Debug)]
-pub struct VkTextureManager {}
+pub struct VkTextureManager {
+    logger: Logger,
+}
 
 impl VkTextureManager {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(logger: Logger) -> Self {
+        Self { logger }
     }
 }
 

@@ -3,12 +3,15 @@ use crate::graphics::manager::manage_scenes::{
     AdditionError, ManageScenes, RenderContext, SceneId, SceneItem,
 };
 use crate::graphics::manager::manage_textures::TextureId;
+use slog::Logger;
 
-pub struct VkSceneManager {}
+pub struct VkSceneManager {
+    logger: Logger,
+}
 
 impl VkSceneManager {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(logger: Logger) -> Self {
+        Self { logger }
     }
 }
 

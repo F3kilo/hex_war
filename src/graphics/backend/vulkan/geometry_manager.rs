@@ -1,13 +1,16 @@
 use crate::graphics::error::{LoadError, NotFoundError};
 use crate::graphics::manager::manage_geometries::{GeometryId, ManageGeometries};
+use slog::Logger;
 use std::path::PathBuf;
 
 #[derive(Debug)]
-pub struct VkGeometryManager {}
+pub struct VkGeometryManager {
+    logger: Logger,
+}
 
 impl VkGeometryManager {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(logger: Logger) -> Self {
+        Self { logger }
     }
 }
 

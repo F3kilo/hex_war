@@ -56,7 +56,7 @@ pub struct HexWarApp {
 
 impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
-        let graphics_backend = VkGraphics::new();
+        let graphics_backend = VkGraphics::new(logger.clone());
         let graphics = Graphics::new(Box::new(graphics_backend));
         let resource_managers = ResourceManagers {
             tex_manager: graphics.get_texture_manager(),
