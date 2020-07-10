@@ -6,7 +6,7 @@ mod vk;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::scene_manager::VkSceneManager;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
-use crate::graphics::backend::{GraphicsBackend, PresentInfo};
+use crate::graphics::backend::{GraphicsBackend, GraphicsSettings, PresentInfo};
 use crate::graphics::manager::manage_geometries::ManageGeometries;
 use crate::graphics::manager::manage_scenes::ManageScenes;
 use crate::graphics::manager::manage_textures::ManageTextures;
@@ -14,13 +14,14 @@ use slog::Logger;
 
 pub struct VkGraphics {
     logger: Logger,
+    settings: GraphicsSettings,
     texture_manager: VkTextureManager,
     geometry_manager: VkGeometryManager,
     scene_manager: VkSceneManager,
 }
 
 impl VkGraphics {
-    pub fn new(logger: Logger) -> Self {
+    pub fn new(logger: Logger, settings: GraphicsSettings) -> Self {
         let texture_manager = VkTextureManager::new(logger.clone());
         let geometry_manager = VkGeometryManager::new(logger.clone());
         let scene_manager = VkSceneManager::new(logger.clone());
@@ -29,6 +30,7 @@ impl VkGraphics {
             texture_manager,
             geometry_manager,
             scene_manager,
+            settings,
         }
     }
 }
@@ -60,5 +62,13 @@ impl GraphicsBackend for VkGraphics {
 
     fn present(&mut self, info: PresentInfo) {
         todo!()
+    }
+
+    fn get_settings(&self) -> GraphicsSettings {
+        self.settings.clone()
+    }
+
+    fn update_settings(&mut self, settings: GraphicsSettings) {
+        self.settings = settings
     }
 }

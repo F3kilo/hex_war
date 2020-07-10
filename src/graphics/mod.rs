@@ -4,7 +4,7 @@ pub mod geometry;
 pub mod scene;
 pub mod texture;
 
-use crate::graphics::backend::{GraphicsBackend, PresentInfo};
+use crate::graphics::backend::{GraphicsBackend, GraphicsSettings, PresentInfo};
 use crate::graphics::proxy::geometry_manager::GeometryManager;
 use crate::graphics::proxy::scene_manager::SceneManager;
 use crate::graphics::proxy::texture_manager::TextureManager;
@@ -60,5 +60,13 @@ impl Graphics {
 
     pub fn present(&mut self, info: PresentInfo) {
         RefCell::borrow_mut(&self.backend).present(info)
+    }
+
+    pub fn get_settings(&self) -> GraphicsSettings {
+        RefCell::borrow_mut(&self.backend).get_settings()
+    }
+
+    pub fn update_settings(&mut self, settings: GraphicsSettings) {
+        RefCell::borrow_mut(&self.backend).update_settings(settings)
     }
 }

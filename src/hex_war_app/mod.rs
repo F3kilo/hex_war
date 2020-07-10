@@ -7,6 +7,7 @@ pub mod update_timer;
 
 use crate::app::{App, ELWT};
 use crate::graphics::backend::vulkan::VkGraphics;
+use crate::graphics::backend::GraphicsSettings;
 use crate::graphics::camera::Camera;
 use crate::graphics::error::LoadError;
 use crate::graphics::geometry::Geometry;
@@ -56,7 +57,7 @@ pub struct HexWarApp {
 
 impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
-        let graphics_backend = VkGraphics::new(logger.clone());
+        let graphics_backend = VkGraphics::new(logger.clone(), GraphicsSettings::load());
         let graphics = Graphics::new(Box::new(graphics_backend));
         let resource_managers = ResourceManagers {
             tex_manager: graphics.get_texture_manager(),

@@ -4,6 +4,25 @@ use crate::graphics::manager::manage_textures::ManageTextures;
 
 pub mod vulkan;
 
+#[derive(Clone)]
+pub struct GraphicsSettings {}
+
+impl GraphicsSettings {
+    pub fn save(&self) {
+        todo!()
+    }
+
+    pub fn load() -> Self {
+        Self {}
+    }
+}
+
+impl Default for GraphicsSettings {
+    fn default() -> Self {
+        Self {}
+    }
+}
+
 #[derive(Debug)]
 pub struct PresentInfo;
 
@@ -18,4 +37,7 @@ pub trait GraphicsBackend {
     fn get_scene_manager(&self) -> &dyn ManageScenes;
 
     fn present(&mut self, info: PresentInfo);
+
+    fn get_settings(&self) -> GraphicsSettings;
+    fn update_settings(&mut self, settings: GraphicsSettings);
 }
