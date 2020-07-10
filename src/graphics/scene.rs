@@ -114,6 +114,12 @@ impl From<SceneItem> for manage_scenes::SceneItem {
     }
 }
 
+impl From<TexturedGeometry> for SceneItem {
+    fn from(tg: TexturedGeometry) -> Self {
+        Self::TexturedGeometry(tg)
+    }
+}
+
 struct TexturedGeometryResourcesIterator<'a> {
     index: usize,
     tg: &'a TexturedGeometry,

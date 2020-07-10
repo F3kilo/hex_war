@@ -1,5 +1,5 @@
+use crate::graphics::backend::GraphicsBackend;
 use crate::graphics::error::{LoadError, NotFoundError};
-use crate::graphics::low_level::GraphicsBackend;
 use crate::graphics::manager::manage_textures::TextureId;
 use crate::math::screen_coords::ScreenCoords;
 use std::cell::RefCell;

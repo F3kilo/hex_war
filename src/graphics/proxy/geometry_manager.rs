@@ -1,5 +1,5 @@
+use crate::graphics::backend::GraphicsBackend;
 use crate::graphics::error::{LoadError, NotFoundError};
-use crate::graphics::low_level::GraphicsBackend;
 use crate::graphics::manager::manage_geometries::GeometryId;
 use std::cell::RefCell;
 use std::path::PathBuf;

@@ -4,7 +4,7 @@ pub mod geometry;
 pub mod scene;
 pub mod texture;
 
-use crate::graphics::low_level::{GraphicsBackend, PresentInfo};
+use crate::graphics::backend::{GraphicsBackend, PresentInfo};
 use crate::graphics::proxy::geometry_manager::GeometryManager;
 use crate::graphics::proxy::scene_manager::SceneManager;
 use crate::graphics::proxy::texture_manager::TextureManager;
@@ -13,7 +13,6 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 pub mod backend;
-pub mod low_level;
 pub mod manager;
 pub mod primitive;
 pub mod proxy;

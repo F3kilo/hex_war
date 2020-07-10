@@ -1,5 +1,5 @@
+use crate::graphics::backend::GraphicsBackend;
 use crate::graphics::error::NotFoundError;
-use crate::graphics::low_level::GraphicsBackend;
 use crate::graphics::manager::manage_scenes::{AdditionError, RenderContext, SceneId, SceneItem};
 use crate::graphics::manager::manage_textures::TextureId;
 use std::cell::RefCell;

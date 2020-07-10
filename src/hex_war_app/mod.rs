@@ -10,11 +10,12 @@ use crate::graphics::backend::vulkan::VkGraphics;
 use crate::graphics::camera::Camera;
 use crate::graphics::error::LoadError;
 use crate::graphics::geometry::Geometry;
+use crate::graphics::proxy::geometry_manager::GeometryManager;
 use crate::graphics::proxy::texture_manager::TextureManager;
 use crate::graphics::scene::Scene;
 use crate::graphics::texture::Texture;
 use crate::graphics::Graphics;
-use crate::hex_war_app::cursor::{Cursor, SpriteCursor};
+use crate::hex_war_app::cursor::Cursor;
 use crate::hex_war_app::ortho_camera::OrthographicCamera;
 use crate::hex_war_app::update_timer::UpdateTimer;
 use crate::math::screen_coords::ScreenCoords;
@@ -25,6 +26,11 @@ use state::State;
 use winit::event::{ElementState, Event, MouseButton, StartCause, WindowEvent};
 use winit::event_loop::ControlFlow;
 use winit::window::{Window, WindowId};
+
+pub struct ResourceManagers {
+    pub tex_manager: TextureManager,
+    pub geom_manager: GeometryManager,
+}
 
 #[derive(Debug, Clone)]
 struct Cameras {
@@ -51,6 +57,10 @@ impl HexWarApp {
     pub fn new(window: Window, logger: Logger) -> Self {
         let graphics_backend = VkGraphics::new();
         let graphics = Graphics::new(Box::new(graphics_backend));
+        let resource_managers = ResourceManagers {
+            tex_manager: graphics.get_texture_manager(),
+            geom_manager: graphics.get_geometry_manager(),
+        };
 
         let unit_quad = Geometry::new(
             "geometries/unit_quad.dae".into(),
@@ -58,7 +68,7 @@ impl HexWarApp {
         )
         .expect("Can't load unit quad geometry.");
 
-        let cursor = HexWarApp::create_cursor(&logger, graphics.get_texture_manager(), unit_quad);
+        let cursor = Cursor::new(resource_managers);
 
         let update_timer = UpdateTimer::new(60);
 
@@ -82,14 +92,6 @@ impl HexWarApp {
             graphics,
             scenes,
         }
-    }
-
-    fn create_cursor(logger: &Logger, tex_manager: TextureManager, unit_quad: Geometry) -> Cursor {
-        let resources = Self::load_cursor_resources(tex_manager, unit_quad)
-            .expect("Can't find cursor textures");
-        let repr = SpriteCursor::new(resources, 1f32);
-
-        Cursor::new(WorldCoords::zero(), repr)
     }
 
     fn load_cursor_resources(
