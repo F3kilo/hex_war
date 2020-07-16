@@ -1,42 +1,71 @@
+use crate::graphics::backend::vulkan::texture::{VkTexture, VkTextureLoader};
 use crate::graphics::error::{LoadError, NotFoundError};
 use crate::graphics::manager::manage_textures::{ManageTextures, TextureId};
 use crate::math::screen_coords::ScreenCoords;
 use slog::Logger;
+use std::collections::HashMap;
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicU64, Ordering};
+
+static TEXTURE_IDS: AtomicU64 = AtomicU64::new(0);
+
+struct TextureIdGenerator;
+
+impl TextureIdGenerator {
+    pub fn next() -> TextureId {
+        TEXTURE_IDS.fetch_add(1, Ordering::Relaxed).into()
+    }
+}
 
 #[derive(Debug)]
 pub struct VkTextureManager {
     logger: Logger,
+    textures: HashMap<TextureId, VkTexture>,
+    loader: VkTextureLoader,
 }
 
 impl VkTextureManager {
-    pub fn new(logger: Logger) -> Self {
-        Self { logger }
+    pub fn new(logger: Logger, loader: VkTextureLoader) -> Self {
+        let textures = HashMap::new();
+        Self {
+            logger,
+            textures,
+            loader,
+        }
     }
 }
 
 impl ManageTextures for VkTextureManager {
     fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError> {
-        todo!()
+        let id = TextureIdGenerator::next();
+        let texture = VkTexture::load(path, &mut self.loader);
+        self.textures.insert(id, texture);
+        Ok(id)
     }
 
     fn drop_texture(&mut self, id: TextureId) -> bool {
-        todo!()
+        self.textures.remove(&id).is_some()
     }
 
     fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError> {
-        todo!()
+        match self.textures.get(&id) {
+            None => Err(NotFoundError),
+            Some(t) => Ok(t.get_path()),
+        }
     }
 
     fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError> {
-        todo!()
+        match self.textures.get(&id) {
+            None => Err(NotFoundError),
+            Some(t) => Ok(t.get_size()),
+        }
     }
 
     fn contains(&self, id: TextureId) -> bool {
-        todo!()
+        self.textures.contains_key(&id)
     }
 
     fn ids(&self) -> Vec<TextureId> {
-        todo!()
+        self.textures.keys().cloned().collect()
     }
 }

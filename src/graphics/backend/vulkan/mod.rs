@@ -1,10 +1,12 @@
 mod geometry_manager;
 mod scene_manager;
+mod texture;
 mod texture_manager;
 mod utils;
 mod vk;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::scene_manager::VkSceneManager;
+use crate::graphics::backend::vulkan::texture::VkTextureLoader;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
 use crate::graphics::backend::{GraphicsBackend, GraphicsSettings, PresentInfo};
 use crate::graphics::manager::manage_geometries::ManageGeometries;
@@ -22,7 +24,8 @@ pub struct VkGraphics {
 
 impl VkGraphics {
     pub fn new(logger: Logger, settings: GraphicsSettings) -> Self {
-        let texture_manager = VkTextureManager::new(logger.clone());
+        let texture_loader = VkTextureLoader::new();
+        let texture_manager = VkTextureManager::new(logger.clone(), texture_loader);
         let geometry_manager = VkGeometryManager::new(logger.clone());
         let scene_manager = VkSceneManager::new(logger.clone());
         Self {
