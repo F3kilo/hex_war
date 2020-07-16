@@ -1,84 +1,18 @@
+pub mod loader;
+
+use crate::graphics::backend::vulkan::texture::loader::{
+    VkTextureData, VkTextureLoader, VkTextureLoadingData, VkTextureLoadingProgress,
+};
 use crate::math::screen_coords::ScreenCoords;
-use glam::Vec2;
 use std::borrow::Borrow;
 use std::cell::{Ref, RefCell};
 use std::fmt;
 use std::path::PathBuf;
-use std::sync::mpsc;
-use std::sync::mpsc::{Receiver, TryRecvError};
-
-#[derive(Debug)]
-pub struct VkTextureLoader {
-    stab: VkTextureData,
-}
-
-impl VkTextureLoader {
-    pub fn new() -> Self {
-        todo!()
-    }
-
-    pub fn load(&mut self, path: PathBuf) -> VkTextureLoadingData {
-        let (tx, rx) = mpsc::channel();
-        let progress = VkTextureLoadingProgressProvider::new(rx);
-        let stab = self.get_stab();
-        VkTextureLoadingData { stab, progress }
-    }
-
-    fn get_stab(&mut self) -> VkTextureData {
-        self.stab
-    }
-}
 
 #[derive(Debug)]
 enum VkTextureState {
     Ready(VkTextureData),
     Loading(VkTextureLoadingData),
-}
-
-#[derive(Debug, Copy, Clone)]
-struct VkTextureLocation {
-    uv_offset: Vec2,
-    uv_size: Vec2,
-}
-
-#[derive(Debug, Copy, Clone)]
-struct VkTextureData {
-    pub location: VkTextureLocation,
-    pub size: ScreenCoords,
-}
-
-#[derive(Debug)]
-enum VkTextureLoadingProgress {
-    Loading,
-    Ready(VkTextureData),
-}
-
-#[derive(Debug)]
-struct VkTextureLoadingProgressProvider {
-    source: Receiver<VkTextureData>,
-}
-
-impl VkTextureLoadingProgressProvider {
-    pub fn new(source: Receiver<VkTextureData>) -> Self {
-        Self { source }
-    }
-
-    pub fn check_progress(&self) -> VkTextureLoadingProgress {
-        let recv = self.source.try_recv();
-        match recv {
-            Ok(data) => VkTextureLoadingProgress::Ready(data),
-            Err(e) => match e {
-                TryRecvError::Empty => VkTextureLoadingProgress::Loading,
-                TryRecvError::Disconnected => todo!("Error processing"),
-            },
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct VkTextureLoadingData {
-    stab: VkTextureData,
-    progress: VkTextureLoadingProgressProvider,
 }
 
 pub struct VkTexture {

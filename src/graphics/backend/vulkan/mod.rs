@@ -6,7 +6,7 @@ mod utils;
 mod vk;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::scene_manager::VkSceneManager;
-use crate::graphics::backend::vulkan::texture::VkTextureLoader;
+use crate::graphics::backend::vulkan::texture::loader::VkTextureLoader;
 use crate::graphics::backend::vulkan::texture_manager::VkTextureManager;
 use crate::graphics::backend::{GraphicsBackend, GraphicsSettings, PresentInfo};
 use crate::graphics::manager::manage_geometries::ManageGeometries;

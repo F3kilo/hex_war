@@ -1,4 +1,5 @@
-use crate::graphics::backend::vulkan::texture::{VkTexture, VkTextureLoader};
+use crate::graphics::backend::vulkan::texture::loader::VkTextureLoader;
+use crate::graphics::backend::vulkan::texture::VkTexture;
 use crate::graphics::error::{LoadError, NotFoundError};
 use crate::graphics::manager::manage_textures::{ManageTextures, TextureId};
 use crate::math::screen_coords::ScreenCoords;
