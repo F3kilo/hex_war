@@ -1,3 +1,4 @@
+mod async_tasker;
 mod geometry_manager;
 mod scene_manager;
 mod texture;
