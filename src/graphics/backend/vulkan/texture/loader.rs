@@ -1,8 +1,9 @@
+use crate::graphics::backend::vulkan::async_tasker::{AsyncTask, TaskSender};
 use crate::math::screen_coords::ScreenCoords;
 use glam::Vec2;
 use std::path::PathBuf;
 use std::sync::mpsc;
-use std::sync::mpsc::{Receiver, TryRecvError};
+use std::sync::mpsc::{Receiver, Sender, TryRecvError};
 
 #[derive(Debug, Copy, Clone)]
 pub struct VkTextureLocation {
@@ -53,6 +54,7 @@ pub struct VkTextureLoadingData {
 #[derive(Debug)]
 pub struct VkTextureLoader {
     stab: VkTextureData,
+    task_sender: TaskSender,
 }
 
 impl VkTextureLoader {
@@ -69,5 +71,27 @@ impl VkTextureLoader {
 
     fn get_stab(&mut self) -> VkTextureData {
         self.stab
+    }
+}
+
+#[derive(Debug)]
+struct LoadTextureTask {
+    loaded_sender: Sender<VkTextureData>,
+}
+
+impl LoadTextureTask {
+    pub fn new(loaded_sender: Sender<VkTextureData>) -> Self {
+        Self { loaded_sender }
+    }
+
+    pub fn load_texture(&mut self) -> VkTextureData {
+        todo!()
+    }
+}
+
+impl AsyncTask for LoadTextureTask {
+    fn perform(&mut self) {
+        let data = self.load_texture();
+        self.loaded_sender.send(data).unwrap();
     }
 }
