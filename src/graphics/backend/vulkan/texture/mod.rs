@@ -1,18 +1,19 @@
 pub mod loader;
 
 use crate::graphics::backend::vulkan::texture::loader::{
-    VkTextureData, VkTextureLoader, VkTextureLoadingData, VkTextureLoadingProgress,
+    VkTextureData, VkTextureLoader, VkTextureLoadingProgress, VkTextureLoadingProgressProvider,
 };
 use crate::math::screen_coords::ScreenCoords;
 use std::borrow::Borrow;
 use std::cell::{Ref, RefCell};
+use std::error::Error;
 use std::fmt;
 use std::path::PathBuf;
 
 #[derive(Debug)]
 enum VkTextureState {
     Ready(VkTextureData),
-    Loading(VkTextureLoadingData),
+    Loading(VkTextureLoadingProgressProvider),
 }
 
 pub struct VkTexture {
@@ -30,17 +31,17 @@ impl VkTexture {
         self.path.clone()
     }
 
-    pub fn get_size(&self) -> ScreenCoords {
-        self.get_texture_data().size
+    pub fn get_size(&self) -> Result<ScreenCoords, NotLoadedError> {
+        Ok(self.get_texture_data()?.size)
     }
 
-    fn get_texture_data(&self) -> VkTextureData {
+    fn get_texture_data(&self) -> Result<VkTextureData, NotLoadedError> {
         self.try_update_state();
         let state_ref = RefCell::borrow(&self.state);
         let state: &VkTextureState = Ref::borrow(&state_ref);
         match state {
-            VkTextureState::Ready(data) => *data,
-            VkTextureState::Loading(data) => data.stab,
+            VkTextureState::Ready(data) => Ok(*data),
+            VkTextureState::Loading(_) => Err(NotLoadedError::Loading),
         }
     }
 
@@ -59,7 +60,7 @@ impl VkTexture {
         let state: &VkTextureState = Ref::borrow(&state_ref);
         match state {
             VkTextureState::Ready(_) => None,
-            VkTextureState::Loading(load_data) => match load_data.progress.check_progress() {
+            VkTextureState::Loading(progress) => match progress.check_progress() {
                 VkTextureLoadingProgress::Loading => None,
                 VkTextureLoadingProgress::Ready(tex_data) => Some(VkTextureState::Ready(tex_data)),
             },
@@ -75,5 +76,18 @@ impl fmt::Debug for VkTexture {
             self.path,
             self.state.borrow(),
         )
+    }
+}
+
+#[derive(Debug)]
+pub enum NotLoadedError {
+    Loading,
+}
+
+impl Error for NotLoadedError {}
+
+impl fmt::Display for NotLoadedError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Texture is loading yet.")
     }
 }

@@ -13,7 +13,6 @@ pub struct VkTextureLocation {
 
 #[derive(Debug, Copy, Clone)]
 pub struct VkTextureData {
-    pub location: VkTextureLocation,
     pub size: ScreenCoords,
 }
 
@@ -47,30 +46,22 @@ impl VkTextureLoadingProgressProvider {
 
 #[derive(Debug)]
 pub struct VkTextureLoadingData {
-    pub stab: VkTextureData,
     pub progress: VkTextureLoadingProgressProvider,
 }
 
 #[derive(Debug)]
 pub struct VkTextureLoader {
-    stab: VkTextureData,
     task_sender: TaskSender,
 }
 
 impl VkTextureLoader {
-    pub fn new() -> Self {
-        todo!()
+    pub fn new(task_sender: TaskSender) -> Self {
+        Self { task_sender }
     }
 
-    pub fn load(&mut self, path: PathBuf) -> VkTextureLoadingData {
+    pub fn load(&mut self, path: PathBuf) -> VkTextureLoadingProgressProvider {
         let (tx, rx) = mpsc::channel();
-        let progress = VkTextureLoadingProgressProvider::new(rx);
-        let stab = self.get_stab();
-        VkTextureLoadingData { stab, progress }
-    }
-
-    fn get_stab(&mut self) -> VkTextureData {
-        self.stab
+        VkTextureLoadingProgressProvider::new(rx)
     }
 }
 
