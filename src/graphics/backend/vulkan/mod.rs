@@ -5,6 +5,7 @@ mod texture;
 mod texture_manager;
 mod utils;
 mod vk;
+use crate::graphics::backend::vulkan::async_tasker::AsyncTasker;
 use crate::graphics::backend::vulkan::geometry_manager::VkGeometryManager;
 use crate::graphics::backend::vulkan::scene_manager::VkSceneManager;
 use crate::graphics::backend::vulkan::texture::loader::VkTextureLoader;
@@ -21,11 +22,13 @@ pub struct VkGraphics {
     texture_manager: VkTextureManager,
     geometry_manager: VkGeometryManager,
     scene_manager: VkSceneManager,
+    async_tasker: AsyncTasker,
 }
 
 impl VkGraphics {
     pub fn new(logger: Logger, settings: GraphicsSettings) -> Self {
-        let texture_loader = VkTextureLoader::new();
+        let async_tasker = AsyncTasker::new();
+        let texture_loader = VkTextureLoader::new(async_tasker.get_task_sender());
         let texture_manager = VkTextureManager::new(logger.clone(), texture_loader);
         let geometry_manager = VkGeometryManager::new(logger.clone());
         let scene_manager = VkSceneManager::new(logger.clone());
@@ -35,6 +38,7 @@ impl VkGraphics {
             geometry_manager,
             scene_manager,
             settings,
+            async_tasker,
         }
     }
 }

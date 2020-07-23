@@ -1,5 +1,5 @@
 use crate::graphics::backend::GraphicsBackend;
-use crate::graphics::error::{LoadError, NotFoundError};
+use crate::graphics::error::{LoadError, UnavailableError};
 use crate::graphics::manager::manage_geometries::GeometryId;
 use std::cell::RefCell;
 use std::path::PathBuf;
@@ -25,7 +25,7 @@ impl GeometryManager {
         back_ref.get_mut_geometry_manager().drop_geometry(id)
     }
 
-    pub fn get_path(&self, id: GeometryId) -> Result<PathBuf, NotFoundError> {
+    pub fn get_path(&self, id: GeometryId) -> Result<PathBuf, UnavailableError> {
         let back_ref = RefCell::borrow(&self.backend);
         back_ref.get_geometry_manager().get_path(id)
     }

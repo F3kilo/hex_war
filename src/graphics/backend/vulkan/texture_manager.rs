@@ -1,6 +1,6 @@
 use crate::graphics::backend::vulkan::texture::loader::VkTextureLoader;
 use crate::graphics::backend::vulkan::texture::VkTexture;
-use crate::graphics::error::{LoadError, NotFoundError};
+use crate::graphics::error::{LoadError, UnavailableError};
 use crate::graphics::manager::manage_textures::{ManageTextures, TextureId};
 use crate::math::screen_coords::ScreenCoords;
 use slog::Logger;
@@ -48,17 +48,17 @@ impl ManageTextures for VkTextureManager {
         self.textures.remove(&id).is_some()
     }
 
-    fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError> {
+    fn get_path(&self, id: TextureId) -> Result<PathBuf, UnavailableError> {
         match self.textures.get(&id) {
-            None => Err(NotFoundError),
+            None => Err(UnavailableError::NotFound),
             Some(t) => Ok(t.get_path()),
         }
     }
 
-    fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError> {
+    fn get_size(&self, id: TextureId) -> Result<ScreenCoords, UnavailableError> {
         match self.textures.get(&id) {
-            None => Err(NotFoundError),
-            Some(t) => Ok(t.get_size()),
+            None => Err(UnavailableError::NotFound),
+            Some(t) => Ok(t.get_size()?),
         }
     }
 

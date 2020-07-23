@@ -1,4 +1,4 @@
-use crate::graphics::error::{LoadError, NotFoundError};
+use crate::graphics::error::{LoadError, UnavailableError};
 use crate::math::screen_coords::ScreenCoords;
 use std::path::PathBuf;
 
@@ -14,8 +14,8 @@ impl From<u64> for TextureId {
 pub trait ManageTextures {
     fn create_texture(&mut self, path: PathBuf) -> Result<TextureId, LoadError>;
     fn drop_texture(&mut self, id: TextureId) -> bool;
-    fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError>;
-    fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError>;
+    fn get_path(&self, id: TextureId) -> Result<PathBuf, UnavailableError>;
+    fn get_size(&self, id: TextureId) -> Result<ScreenCoords, UnavailableError>;
 
     fn contains(&self, id: TextureId) -> bool;
     fn ids(&self) -> Vec<TextureId>;

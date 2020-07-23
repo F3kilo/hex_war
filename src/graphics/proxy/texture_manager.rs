@@ -1,5 +1,5 @@
 use crate::graphics::backend::GraphicsBackend;
-use crate::graphics::error::{LoadError, NotFoundError};
+use crate::graphics::error::{LoadError, UnavailableError};
 use crate::graphics::manager::manage_textures::TextureId;
 use crate::math::screen_coords::ScreenCoords;
 use std::cell::RefCell;
@@ -26,12 +26,12 @@ impl TextureManager {
         back_ref.get_mut_texture_manager().drop_texture(id)
     }
 
-    pub fn get_path(&self, id: TextureId) -> Result<PathBuf, NotFoundError> {
+    pub fn get_path(&self, id: TextureId) -> Result<PathBuf, UnavailableError> {
         let back_ref = RefCell::borrow(&self.backend);
         back_ref.get_texture_manager().get_path(id)
     }
 
-    pub fn get_size(&self, id: TextureId) -> Result<ScreenCoords, NotFoundError> {
+    pub fn get_size(&self, id: TextureId) -> Result<ScreenCoords, UnavailableError> {
         let back_ref = RefCell::borrow(&self.backend);
         back_ref.get_texture_manager().get_size(id)
     }

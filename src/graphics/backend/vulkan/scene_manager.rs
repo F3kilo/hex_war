@@ -1,4 +1,4 @@
-use crate::graphics::error::NotFoundError;
+use crate::graphics::error::UnavailableError;
 use crate::graphics::manager::manage_scenes::{
     AdditionError, ManageScenes, RenderContext, SceneId, SceneItem,
 };
@@ -28,7 +28,7 @@ impl ManageScenes for VkSceneManager {
         todo!()
     }
 
-    fn clear(&mut self, id: SceneId) -> Result<(), NotFoundError> {
+    fn clear(&mut self, id: SceneId) -> Result<(), UnavailableError> {
         todo!()
     }
 

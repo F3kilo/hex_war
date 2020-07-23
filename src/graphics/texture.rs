@@ -1,4 +1,4 @@
-use crate::graphics::error::{LoadError, NotFoundError};
+use crate::graphics::error::{LoadError, UnavailableError};
 use crate::graphics::manager::manage_textures::TextureId;
 use crate::graphics::proxy::texture_manager::TextureManager;
 use crate::math::screen_coords::ScreenCoords;
@@ -18,9 +18,9 @@ impl UniqueTexture {
         Ok(Self { manager, id })
     }
 
-    pub fn from_raw(id: TextureId, manager: TextureManager) -> Result<Self, NotFoundError> {
+    pub fn from_raw(id: TextureId, manager: TextureManager) -> Result<Self, UnavailableError> {
         if !manager.contains(id) {
-            return Err(NotFoundError);
+            return Err(UnavailableError::NotFound);
         }
         Ok(Self { id, manager })
     }
@@ -84,7 +84,7 @@ impl Texture {
         self.unique.get_id()
     }
 
-    pub fn from_raw(id: TextureId, manager: TextureManager) -> Result<Self, NotFoundError> {
+    pub fn from_raw(id: TextureId, manager: TextureManager) -> Result<Self, UnavailableError> {
         UniqueTexture::from_raw(id, manager).map(|unique| Self {
             unique: Rc::new(unique),
         })

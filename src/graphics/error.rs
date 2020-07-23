@@ -12,10 +12,13 @@ impl fmt::Display for LoadError {
 }
 
 #[derive(Debug)]
-pub struct NotFoundError;
+pub enum UnavailableError {
+    Loading,
+    NotFound,
+}
 
-impl Error for NotFoundError {}
-impl fmt::Display for NotFoundError {
+impl Error for UnavailableError {}
+impl fmt::Display for UnavailableError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Resource with specified ID is not found.")
     }

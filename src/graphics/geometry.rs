@@ -1,4 +1,4 @@
-use crate::graphics::error::{LoadError, NotFoundError};
+use crate::graphics::error::{LoadError, UnavailableError};
 use crate::graphics::manager::manage_geometries::GeometryId;
 use crate::graphics::proxy::geometry_manager::GeometryManager;
 use std::fmt;
@@ -17,9 +17,9 @@ impl UniqueGeometry {
         Ok(Self { id, manager })
     }
 
-    pub fn from_raw(id: GeometryId, manager: GeometryManager) -> Result<Self, NotFoundError> {
+    pub fn from_raw(id: GeometryId, manager: GeometryManager) -> Result<Self, UnavailableError> {
         if !manager.contains(id) {
-            return Err(NotFoundError);
+            return Err(UnavailableError::NotFound);
         }
         Ok(Self { id, manager })
     }
@@ -73,7 +73,7 @@ impl Geometry {
         })
     }
 
-    pub fn from_raw(id: GeometryId, manager: GeometryManager) -> Result<Self, NotFoundError> {
+    pub fn from_raw(id: GeometryId, manager: GeometryManager) -> Result<Self, UnavailableError> {
         UniqueGeometry::from_raw(id, manager).map(|unique| Self {
             unique: Rc::new(unique),
         })

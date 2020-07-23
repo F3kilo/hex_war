@@ -1,4 +1,4 @@
-use crate::graphics::error::NotFoundError;
+use crate::graphics::error::UnavailableError;
 use crate::graphics::manager::manage_geometries::GeometryId;
 use crate::graphics::manager::manage_textures::TextureId;
 use glam::{Mat4, Vec2};
@@ -15,7 +15,7 @@ pub trait ManageScenes {
 
     fn add_item(&mut self, id: SceneId, item: SceneItem) -> Result<(), AdditionError>;
 
-    fn clear(&mut self, id: SceneId) -> Result<(), NotFoundError>;
+    fn clear(&mut self, id: SceneId) -> Result<(), UnavailableError>;
 
     fn render(&mut self, id: SceneId, context: &RenderContext) -> TextureId;
 

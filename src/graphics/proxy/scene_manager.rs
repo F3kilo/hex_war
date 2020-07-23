@@ -1,5 +1,5 @@
 use crate::graphics::backend::GraphicsBackend;
-use crate::graphics::error::NotFoundError;
+use crate::graphics::error::UnavailableError;
 use crate::graphics::manager::manage_scenes::{AdditionError, RenderContext, SceneId, SceneItem};
 use crate::graphics::manager::manage_textures::TextureId;
 use std::cell::RefCell;
@@ -30,7 +30,7 @@ impl SceneManager {
         back.get_mut_scene_manager().add_item(id, item)
     }
 
-    pub fn clear(&mut self, id: SceneId) -> Result<(), NotFoundError> {
+    pub fn clear(&mut self, id: SceneId) -> Result<(), UnavailableError> {
         let mut back = RefCell::borrow_mut(&self.backend);
         back.get_mut_scene_manager().clear(id)
     }

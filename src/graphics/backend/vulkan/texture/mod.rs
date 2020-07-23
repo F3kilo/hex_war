@@ -3,6 +3,7 @@ pub mod loader;
 use crate::graphics::backend::vulkan::texture::loader::{
     VkTextureData, VkTextureLoader, VkTextureLoadingProgress, VkTextureLoadingProgressProvider,
 };
+use crate::graphics::error::UnavailableError;
 use crate::math::screen_coords::ScreenCoords;
 use std::borrow::Borrow;
 use std::cell::{Ref, RefCell};
@@ -89,5 +90,11 @@ impl Error for NotLoadedError {}
 impl fmt::Display for NotLoadedError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Texture is loading yet.")
+    }
+}
+
+impl From<NotLoadedError> for UnavailableError {
+    fn from(_: NotLoadedError) -> Self {
+        UnavailableError::Loading
     }
 }

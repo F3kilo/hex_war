@@ -35,12 +35,12 @@ impl TaskSender {
 }
 
 #[derive(Debug)]
-pub struct AsynkTasker {
+pub struct AsyncTasker {
     thread: JoinHandle<()>,
     tx: Sender<Command>,
 }
 
-impl AsynkTasker {
+impl AsyncTasker {
     pub fn new() -> Self {
         let (tx, rx) = mpsc::channel();
         let thread = std::thread::spawn(move || loop {
@@ -62,7 +62,7 @@ impl AsynkTasker {
     }
 }
 
-impl Drop for AsynkTasker {
+impl Drop for AsyncTasker {
     fn drop(&mut self) {
         self.tx
             .send(Command::Finish)
@@ -72,7 +72,7 @@ impl Drop for AsynkTasker {
 
 #[cfg(test)]
 mod tests {
-    use crate::graphics::backend::vulkan::async_tasker::{AsyncTask, AsynkTasker};
+    use crate::graphics::backend::vulkan::async_tasker::{AsyncTask, AsyncTasker};
     use std::sync::mpsc::Sender;
     use std::sync::{mpsc, Arc, Mutex};
     use std::thread;
@@ -116,7 +116,7 @@ mod tests {
 
     #[test]
     fn perform_task() {
-        let tasker = AsynkTasker::new();
+        let tasker = AsyncTasker::new();
         let performed = Arc::new(Mutex::new(false));
         let task = Task::new(performed.clone());
         tasker.get_task_sender().send(Box::new(task)).unwrap();
@@ -127,7 +127,7 @@ mod tests {
 
     #[test]
     fn perform_task_with_answer() {
-        let tasker = AsynkTasker::new();
+        let tasker = AsyncTasker::new();
         let (tx, rx) = mpsc::channel();
         let task = TaskWithAnswer::new(tx);
         tasker.get_task_sender().send(Box::new(task)).unwrap();

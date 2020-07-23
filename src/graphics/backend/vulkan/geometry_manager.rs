@@ -1,4 +1,4 @@
-use crate::graphics::error::{LoadError, NotFoundError};
+use crate::graphics::error::{LoadError, UnavailableError};
 use crate::graphics::manager::manage_geometries::{GeometryId, ManageGeometries};
 use slog::Logger;
 use std::path::PathBuf;
@@ -23,7 +23,7 @@ impl ManageGeometries for VkGeometryManager {
         todo!()
     }
 
-    fn get_path(&self, id: GeometryId) -> Result<PathBuf, NotFoundError> {
+    fn get_path(&self, id: GeometryId) -> Result<PathBuf, UnavailableError> {
         todo!()
     }
 
